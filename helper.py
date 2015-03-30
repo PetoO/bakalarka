@@ -53,3 +53,7 @@ def time_from_ms(num):
 
 
     # print time_from_ms(750050)
+
+
+def scale_image(img, height, width):
+    pass
