@@ -1,5 +1,6 @@
 __author__ = 'peto'
 from collections import deque
+import cv2
 
 
 class Buff_avg():
@@ -31,7 +32,7 @@ class Buff_avg():
         # buff=Buff_avg(5)
         # print buff.add_value(0.1531)
 
-        #print buff.add_value(5.0)
+        # print buff.add_value(5.0)
 
 
 def time_from_ms(num):
@@ -55,5 +56,18 @@ def time_from_ms(num):
     # print time_from_ms(750050)
 
 
-def scale_image(img, height, width):
-    pass
+def scale_image(img, w=0, h=-1):
+    if w == 0:
+        return img
+    height, width, depth = img.shape
+    fw = float(w) / float(width)
+    fh = 1.0
+    if h <= 0:
+        fh = fw
+    else:
+        fh = float(h) / float(height)
+    img2 = cv2.resize(img, (0, 0), fx=fh, fy=fw)
+    return img2
+
+
+    # print scale_image(cv2.imread("hr.png"), 1000,5).shape
