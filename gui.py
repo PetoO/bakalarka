@@ -33,8 +33,10 @@ class main_frame(wx.Frame):
 
         bSizer41 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_bitmap11 = wx.StaticBitmap(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer41.SetMinSize(wx.Size(530, -1))
+        self.m_bitmap11 = wx.StaticBitmap(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(540, 350), 0)
         self.m_bitmap11.SetMinSize(wx.Size(540, 350))
+        self.m_bitmap11.SetMaxSize(wx.Size(540, 350))
 
         bSizer41.Add(self.m_bitmap11, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
@@ -158,8 +160,8 @@ class main_frame(wx.Frame):
 
         gSizer7 = wx.GridSizer(7, 2, 0, 1)
 
-        self.pic1 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition,
-                                    wx.DefaultSize, 0)
+        self.pic1 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY, wx.Bitmap(u"1.png", wx.BITMAP_TYPE_ANY),
+                                    wx.DefaultPosition, wx.DefaultSize, 0)
         self.pic1.SetMinSize(wx.Size(160, 90))
 
         gSizer7.Add(self.pic1, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
@@ -171,8 +173,8 @@ class main_frame(wx.Frame):
 
         gSizer7.Add(self.pic1Text, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-        self.pic2 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition,
-                                    wx.DefaultSize, 0)
+        self.pic2 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY, wx.Bitmap(u"1.png", wx.BITMAP_TYPE_ANY),
+                                    wx.DefaultPosition, wx.DefaultSize, 0)
         self.pic2.SetMinSize(wx.Size(160, 90))
 
         gSizer7.Add(self.pic2, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
@@ -184,8 +186,8 @@ class main_frame(wx.Frame):
 
         gSizer7.Add(self.pic2Text, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
-        self.pic3 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition,
-                                    wx.DefaultSize, 0)
+        self.pic3 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY, wx.Bitmap(u"1.png", wx.BITMAP_TYPE_ANY),
+                                    wx.DefaultPosition, wx.DefaultSize, 0)
         self.pic3.SetMinSize(wx.Size(160, 90))
 
         gSizer7.Add(self.pic3, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
@@ -248,7 +250,7 @@ class main_frame(wx.Frame):
 
         bSizer4.Add(gSizer15, 1, wx.EXPAND, 5)
 
-        self.SetSizer(bSizer4 )
+        self.SetSizer(bSizer4)
         self.Layout()
 
         # Connect Events
@@ -265,12 +267,12 @@ class main_frame(wx.Frame):
         self.pb_radioBtn2.Bind(wx.EVT_RADIOBUTTON, self.pb_radioBtn2OnRadioButton)
         self.pb_radioBtn3.Bind(wx.EVT_RADIOBUTTON, self.pb_radioBtn3OnRadioButton)
         self.pb_radioBtn4.Bind(wx.EVT_RADIOBUTTON, self.pb_radioBtn4OnRadioButton)
-        self.pic1.Bind(wx.EVT_LEFT_DCLICK, self.pic1OnLeftDClick)
-        self.pic1Text.Bind(wx.EVT_LEFT_DCLICK, self.pic1TextOnLeftDClick)
-        self.pic2.Bind(wx.EVT_LEFT_DCLICK, self.pic2OnLeftDClick)
-        self.pic2Text.Bind(wx.EVT_LEFT_DCLICK, self.pic2TextOnLeftDClick)
-        self.pic3.Bind(wx.EVT_LEFT_DCLICK, self.pic3OnLeftDClick)
-        self.pic3Text.Bind(wx.EVT_LEFT_DCLICK, self.pic3TextOnLeftDClick)
+        self.pic1.Bind(wx.EVT_LEFT_UP, self.pic1OnLeftUp)
+        self.pic1Text.Bind(wx.EVT_LEFT_UP, self.pic1TextOnLeftUp)
+        self.pic2.Bind(wx.EVT_LEFT_UP, self.pic2OnLeftUp)
+        self.pic2Text.Bind(wx.EVT_LEFT_UP, self.pic2TextOnLeftUp)
+        self.pic3.Bind(wx.EVT_LEFT_UP, self.pic3OnLeftUp)
+        self.pic3Text.Bind(wx.EVT_LEFT_UP, self.pic3TextOnLeftUp)
         self.m_button11.Bind(wx.EVT_BUTTON, self.m_button1OnButtonClick)
 
     def __del__(self):
@@ -317,29 +319,26 @@ class main_frame(wx.Frame):
     def pb_radioBtn4OnRadioButton(self, event):
         event.Skip()
 
-    def pic1OnLeftDClick(self, event):
+    def pic1OnLeftUp(self, event):
         event.Skip()
 
-    def pic1TextOnLeftDClick(self, event):
+    def pic1TextOnLeftUp(self, event):
         event.Skip()
 
-    def pic2OnLeftDClick(self, event):
+    def pic2OnLeftUp(self, event):
         event.Skip()
 
-    def pic2TextOnLeftDClick(self, event):
+    def pic2TextOnLeftUp(self, event):
         event.Skip()
 
-    def pic3OnLeftDClick(self, event):
+    def pic3OnLeftUp(self, event):
         event.Skip()
 
-    def pic3TextOnLeftDClick(self, event):
+    def pic3TextOnLeftUp(self, event):
         event.Skip()
 
     def m_button1OnButtonClick(self, event):
         event.Skip()
-    
-
-
 
 
 ###########################################################################

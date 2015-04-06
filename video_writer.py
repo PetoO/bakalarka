@@ -2,6 +2,7 @@ __author__ = 'peto'
 from cv2 import VideoWriter_fourcc, VideoWriter
 import moviepy.video.io.ffmpeg_tools as mv
 from os import path, remove
+import shutil
 
 # test
 # import picture as pc
@@ -11,8 +12,7 @@ from os import path, remove
 
 class Video_writer():
     def __init__(self, videosource, fps, width, height, result):
-        print
-        "Initializing video writer."
+        print("Initializing video writer.")
         self.audiofile = "tempaudio.mp3"
         self.videosource = videosource
         self.tempresult = "tempres.avi"
@@ -45,8 +45,7 @@ class Video_writer():
         return
 
     def merge_audio_video(self):
-        print
-        "Merging audio and video."
+        print("Merging audio and video.")
         self.get_audio_clip()
         mv.ffmpeg_merge_video_audio(self.tempresult, self.audiofile, self.result)
         remove(self.audiofile)
@@ -62,16 +61,18 @@ class Video_writer():
         #cv2.imshow('prototype',frame)
         self.out.write(frame)
 
-    def finish_video(self):
-        print
-        "Finishing video."
+
+    def finish_video(self, sound=True):
+        print("Finishing video.")
         self.out.release()
-        self.merge_audio_video()
+        if sound:
+            self.merge_audio_video()
+        else:
+            shutil.copy2(self.tempresult, self.result)
         remove(self.tempresult)
 
     def quit(self):
-        print
-        "Quiting."
+        print("Quiting.")
         self.out.release()
         if path.exists(self.audiofile):
             remove(self.audiofile)

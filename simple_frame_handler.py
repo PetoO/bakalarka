@@ -19,7 +19,7 @@ class Simple_frame_handler:
         #print self.pic_pos_y
         self.last_beat_time = 0
         self.map = mapp.Google_map(dc)
-        self.show_map = False
+        self.show_map = True
         self.show_hr = True
 
         return

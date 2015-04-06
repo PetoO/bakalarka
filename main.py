@@ -10,8 +10,7 @@ import gui as main
 import thread
 import time
 
-#data_file = "hero.tcx"
-#video_file = "hero.mp4"
+
 data_file = ""
 video_file = ""
 dir_path = ""
@@ -21,6 +20,11 @@ curr_time = 0
 video_compose = None
 frame = None
 autosync = False
+frame_handlers = ["simple_frame_handler", "simple_frame_handler", "simple_frame_handler"]
+
+video_file = "C:\Users\peto\Desktop\hero.mp4"
+data_file = "C:\Users\peto\Desktop\hero.tcx"
+dir_path = 'C:\Users\peto\Desktop\output.avi'
 
 
 class main_frame(main.main_frame):
@@ -36,7 +40,7 @@ class main_frame(main.main_frame):
 
             video_compose.set_data_start_time(timer)
             self.show_frame()
-            self.m_slider1.SetRange(0, video_compose.video_reader.get_frames_count())
+            self.m_slider11.SetRange(0, video_compose.video_reader.get_frames_count())
 
     # Handlers for main_frame events.
     def m_slider1OnScroll(self, event):
@@ -114,50 +118,83 @@ class main_frame(main.main_frame):
         #if data_file=="" or video_file =="":
         if video_compose != None:
             video_compose.set_data_start_time(timer)
-            self.working.Show(True)
-            thread.start_new_thread(self.working.update, (video_compose,))
+            # self.working.Show(True)
+            #thread.start_new_thread(self.working.update, (video_compose,))
+            thread.start_new_thread(self.update, ())
             thread.start_new_thread(video_compose.start_composing, ())
             # video_compose.start_composing()
 
     def pb_radioBtn1OnRadioButton(self, event):
-        # TODO: Implement pb_radioBtn1OnRadioButton
-        pass
+        global video_compose
+        video_compose.set_playback_speed()
 
     def pb_radioBtn2OnRadioButton(self, event):
-        # TODO: Implement pb_radioBtn2OnRadioButton
-        pass
+        global video_compose
+        video_compose.set_playback_speed(2)
 
     def pb_radioBtn3OnRadioButton(self, event):
-        # TODO: Implement pb_radioBtn3OnRadioButton
-        pass
+        global video_compose
+        video_compose.set_playback_speed(5)
 
     def pb_radioBtn4OnRadioButton(self, event):
-        # TODO: Implement pb_radioBtn4OnRadioButton
-        pass
+        global video_compose
+        video_compose.set_playback_speed(10)
 
-    def pic1OnLeftDClick(self, event):
-        # TODO: Implement pic1OnLeftDClick
-        pass
 
-    def pic1TextOnLeftDClick(self, event):
-        # TODO: Implement pic1TextOnLeftDClick
-        pass
+    def pic1OnLeftUp(self, event):
+        self.pic1Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+        self.pic2Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        self.pic3Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        global video_compose
+        global frame_handlers
+        video_compose.load_handler(frame_handlers[0])
+        self.Refresh()
 
-    def pic2OnLeftDClick(self, event):
-        # TODO: Implement pic2OnLeftDClick
-        pass
+    def pic1TextOnLeftUp(self, event):
+        self.pic1Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+        self.pic2Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        self.pic3Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        global video_compose
+        global frame_handlers
+        video_compose.load_handler(frame_handlers[0])
+        self.Refresh()
 
-    def pic2TextOnLeftDClick(self, event):
-        # TODO: Implement pic2TextOnLeftDClick
-        pass
+    def pic2OnLeftUp(self, event):
+        self.pic1Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        self.pic2Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+        self.pic3Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        global video_compose
+        global frame_handlers
+        video_compose.load_handler(frame_handlers[1])
+        self.Refresh()
 
-    def pic3OnLeftDClick(self, event):
-        # TODO: Implement pic3OnLeftDClick
-        pass
+    def pic2TextOnLeftUp(self, event):
+        self.pic1Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        self.pic2Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+        self.pic3Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        global video_compose
+        global frame_handlers
+        video_compose.load_handler(frame_handlers[1])
+        self.Refresh()
 
-    def pic3TextOnLeftDClick(self, event):
-        # TODO: Implement pic3TextOnLeftDClick
-        pass
+
+    def pic3OnLeftUp(self, event):
+        self.pic1Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        self.pic2Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        self.pic3Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+        global video_compose
+        global frame_handlers
+        video_compose.load_handler(frame_handlers[2])
+        self.Refresh()
+
+    def pic3TextOnLeftUp(self, event):
+        self.pic1Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        self.pic2Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        self.pic3Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+        global video_compose
+        global frame_handlers
+        video_compose.load_handler(frame_handlers[2])
+        self.Refresh()
 
 
     def show_frame(self):
@@ -168,7 +205,7 @@ class main_frame(main.main_frame):
         # timer = strftime("%H:%M:%S +0000", curr_time)
         timestr = help.time_from_ms(int(curr_time))
         #self.m_staticText6.SetLabelText("00:00:000")
-        self.m_staticText6.SetLabelText(timestr)
+        self.m_staticText61.SetLabelText(timestr)
 
         if video_compose is not None:
             video_compose.set_data_start_time(timer)
@@ -176,7 +213,7 @@ class main_frame(main.main_frame):
             frame = video_compose.get_handled_frame(curr_time)
             frame = cv2.resize(frame, (0, 0), fx=0.26, fy=0.26)
             img = self.GetBitmap(frame)
-            self.m_bitmap1.SetBitmap(img)
+            self.m_bitmap11.SetBitmap(img)
             self.Refresh()
 
     def GetBitmap(self, array, width=1920, height=1080, colour=(0, 0, 0)):
@@ -187,6 +224,26 @@ class main_frame(main.main_frame):
         image.SetData(array.tostring())
         wxBitmap = image.ConvertToBitmap()  # OR:  wx.BitmapFromImage(image)
         return wxBitmap
+
+    def update(self):
+        self.statusBarPercentage.Show(True)
+        self.statusBar.Show(True)
+        self.statusBarText.Show(True)
+        self.Refresh()
+        global video_compose
+        fc = int(video_compose.frames_count)
+        print fc
+        self.statusBar.SetRange(fc)
+        cf = 0
+        while cf < fc:
+            cf = int(video_compose.curr_frame)
+            self.statusBar.SetValue(cf)
+            self.statusBarPercentage.SetLabelText(str(int((100.0 / fc) * cf)) + "%")
+            time.sleep(1)
+        self.statusBarPercentage.Show(False)
+        self.statusBar.Show(False)
+        self.statusBarText.Show(False)
+        self.Refresh()
 
 
 class choose_files(main.choose_files):
@@ -243,8 +300,7 @@ class choose_files(main.choose_files):
             self.parent.m_slider1.SetRange(0, video_compose.video_reader.get_frames_count())
             timestr = help.time_from_ms((int(video_compose.video_reader.get_frames_count()) // int(
                 video_compose.video_reader.get_fps())) * 1000)
-            self.parent.m_staticText7.SetLabelText("00:00:000")
-            self.parent.m_staticText7.SetLabelText(timestr)
+            self.parent.m_staticText71.SetLabelText(timestr)
 
 
 class error_dialog(main.error_dialog):

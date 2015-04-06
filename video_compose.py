@@ -1,6 +1,6 @@
 __author__ = 'peto'
 
-from time import time
+import time
 import data_collection as dc
 import video_reader as vr
 import video_writer as vw
@@ -10,6 +10,7 @@ import video_writer as vw
 
 class Video_compose():
     def __init__(self, file, video, handler="simple_frame_handler", output="output.avi"):
+        self.playback_speed = 10
         self.data_start_time = 0
         self.video_start_time = 0
         self.precision = 0.5
@@ -43,6 +44,8 @@ class Video_compose():
         else:
             return
 
+    def set_playback_speed(self, speed=1):
+        self.playback_speed = int(speed)
 
     def set_data_start_time(self, time):
         print "Data start time set to " + str(time) + " ms."
@@ -56,23 +59,34 @@ class Video_compose():
         print "Starting composing video."
         # frames_count = self.video_reader.get_frames_count()
         self.video_reader.set_position_in_ms(self.video_start_time)
+        print "Setting position to 0."
         # + or - to time
         data = self.data_collection.get_data_at(self.video_reader.get_position_in_ms() - self.data_start_time)
-        a = time()
+        print "Getting first data."
+        a = time.time()
         b = self.video_reader.get_position_in_ms()
         last = 0
+        print "For cycle begining."
         for i in range(0, int(self.frames_count)):
-            self.curr_frame +=1
+            print "Handling frame:" + str(i)
+            self.curr_frame += 1
             # curr_video_time = self.video_reader.get_position_in_ms()
+            if i % self.playback_speed is not 0:
+                self.video_reader.read_frame()
+                continue
             frame = self.handle_frame(self.video_reader.read_frame(), data)
+            if frame is None:
+                print "Frame is None"
+                break
+            print "Writing frame"
             self.write_frame(frame)
             # print b
             if b - last > self.precision:
                 data = self.data_collection.get_data_at(self.video_reader.get_position_in_ms() - self.data_start_time)
                 last = b
             b = self.video_reader.get_position_in_ms()
-        print time() - a
-        self.video_writer.finish_video()
+        print time.time() - a
+        self.video_writer.finish_video(False)
         return
 
     def quit_composing(self):
@@ -80,7 +94,9 @@ class Video_compose():
         self.video_reader.set_position_frame(0)
 
     def handle_frame(self, frame, data):
-        return self.handler.create_frame(frame, data)
+        if frame is not None:
+            return self.handler.create_frame(frame, data)
+        return None
 
     def write_frame(self, frame):
         self.video_writer.write_frame(frame)
