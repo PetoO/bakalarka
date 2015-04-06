@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*- 
 
 # ##########################################################################
 ## Python code generated with wxFormBuilder (version Jun  5 2014)
@@ -215,7 +215,7 @@ class main_frame(wx.Frame):
 
         gSizer7.AddSpacer(( 0, 0), 1, wx.EXPAND, 5)
 
-        self.m_scrolledWindow1.SetSizer(gSizer7)
+        self.m_scrolledWindow1.SetSizer(gSizer7 )
         self.m_scrolledWindow1.Layout()
         gSizer7.Fit(self.m_scrolledWindow1)
         bSizer8.Add(self.m_scrolledWindow1, 1, wx.EXPAND | wx.ALL, 5)
@@ -250,10 +250,11 @@ class main_frame(wx.Frame):
 
         bSizer4.Add(gSizer15, 1, wx.EXPAND, 5)
 
-        self.SetSizer(bSizer4)
+        self.SetSizer(bSizer4 )
         self.Layout()
 
         # Connect Events
+        self.Bind(wx.EVT_CLOSE, self.main_frameOnClose)
         self.m_slider11.Bind(wx.EVT_SCROLL, self.m_slider1OnScroll)
         self.m_slider11.Bind(wx.EVT_SCROLL_CHANGED, self.m_slider1OnScrollChanged)
         self.m_button71.Bind(wx.EVT_BUTTON, self.m_button7OnButtonClick)
@@ -280,6 +281,9 @@ class main_frame(wx.Frame):
 
 
     # Virtual event handlers, overide them in your derived class
+    def main_frameOnClose(self, event):
+        event.Skip()
+
     def m_slider1OnScroll(self, event):
         event.Skip()
 
@@ -339,10 +343,10 @@ class main_frame(wx.Frame):
 
     def m_button1OnButtonClick(self, event):
         event.Skip()
-
+    
 
 ###########################################################################
-## Class Choose_files
+## Class choose_files
 ###########################################################################
 
 class choose_files(wx.Dialog):
@@ -401,12 +405,13 @@ class choose_files(wx.Dialog):
         self.m_button3 = wx.Button(self, wx.ID_ANY, u"OK", wx.DefaultPosition, wx.DefaultSize, 0)
         bSizer3.Add(self.m_button3, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
-        self.SetSizer(bSizer3)
+        self.SetSizer(bSizer3 )
         self.Layout()
 
-        self.Centre(wx.BOTH)
-
+        self.Centre(wx.BOTH )
+        
         # Connect Events
+        self.Bind(wx.EVT_CLOSE, self.choose_filesOnClose)
         self.video_filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, self.video_filePickerOnFileChanged)
         self.data_filePicker.Bind(wx.EVT_FILEPICKER_CHANGED, self.data_filePickerOnFileChanged)
         self.m_dirPicker1.Bind(wx.EVT_DIRPICKER_CHANGED, self.m_dirPicker1OnDirChanged)
@@ -418,6 +423,9 @@ class choose_files(wx.Dialog):
 
 
     # Virtual event handlers, overide them in your derived class
+    def choose_filesOnClose(self, event):
+        event.Skip()
+
     def video_filePickerOnFileChanged(self, event):
         event.Skip()
 
@@ -432,7 +440,7 @@ class choose_files(wx.Dialog):
 
     def m_button3OnButtonClick(self, event):
         event.Skip()
-
+    
 
 ###########################################################################
 ## Class error_dialog
@@ -454,12 +462,13 @@ class error_dialog(wx.Dialog):
         self.m_button4 = wx.Button(self, wx.ID_ANY, u"OK", wx.DefaultPosition, wx.DefaultSize, 0)
         bSizer6.Add(self.m_button4, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
-        self.SetSizer(bSizer6)
+        self.SetSizer(bSizer6 )
         self.Layout()
 
-        self.Centre(wx.BOTH)
-
+        self.Centre(wx.BOTH )
+        
         # Connect Events
+        self.Bind(wx.EVT_CLOSE, self.error_dialogOnClose)
         self.m_button4.Bind(wx.EVT_BUTTON, self.m_button4OnButtonClick)
 
     def __del__(self):
@@ -467,9 +476,12 @@ class error_dialog(wx.Dialog):
 
 
     # Virtual event handlers, overide them in your derived class
-    def m_button4OnButtonClick(self, event):
+    def error_dialogOnClose(self, event):
         event.Skip()
 
+    def m_button4OnButtonClick(self, event):
+        event.Skip()
+    
 
 ###########################################################################
 ## Class progress_dialog
@@ -492,7 +504,7 @@ class progress_dialog(wx.Dialog):
         self.m_gauge1.SetValue(0)
         bSizer5.Add(self.m_gauge1, 0, wx.ALL, 5)
 
-        self.SetSizer(bSizer5)
+        self.SetSizer(bSizer5 )
         self.Layout()
 
         self.Centre(wx.BOTH)

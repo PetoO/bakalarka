@@ -297,10 +297,16 @@ class choose_files(main.choose_files):
                 self.parent.m_spinCtrl1.SetValue(int(timer))
                 video_compose.set_data_start_time(int(timer))
             self.parent.show_frame()
-            self.parent.m_slider1.SetRange(0, video_compose.video_reader.get_frames_count())
+            self.parent.m_slider11.SetRange(0, video_compose.video_reader.get_frames_count())
             timestr = help.time_from_ms((int(video_compose.video_reader.get_frames_count()) // int(
                 video_compose.video_reader.get_fps())) * 1000)
             self.parent.m_staticText71.SetLabelText(timestr)
+
+    def choose_filesOnClose(self, event):
+        self.MakeModal(False)
+        # if data_file != "" | video_file != "" | dir_path != "":
+        # self.parent.Close()
+        event.Skip()
 
 
 class error_dialog(main.error_dialog):
@@ -333,6 +339,8 @@ class progress_dialog(main.progress_dialog):
 app = wx.App(False)  # Create a new app, don't redirect stdout/stderr to a window.
 frame1 = main_frame(None)
 frame1.Show(True)
+app.SetTopWindow(frame1)
 frame = choose_files(frame1)
+frame.MakeModal(True)
 frame.Show(True)
 app.MainLoop()
