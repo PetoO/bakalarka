@@ -7,6 +7,8 @@ import helper as help
 import auto_sync
 import os
 import gui as main
+import thread
+import time
 
 #data_file = "hero.tcx"
 #video_file = "hero.mp4"
@@ -14,7 +16,7 @@ data_file = ""
 video_file = ""
 dir_path = ""
 output = "output.avi"
-time = 0
+timer = 0
 curr_time = 0
 video_compose = None
 frame = None
@@ -27,11 +29,12 @@ class main_frame(main.main_frame):
         global data_file
         global video_file
         global video_compose
+        self.working = progress_dialog(self)
         if data_file != "" and video_file != "":
             video_compose = vc.Video_compose(data_file, video_file, "simple_frame_handler",
                                              'C:\\Users\\peto\\Desktop\\output.avi')
 
-            video_compose.set_data_start_time(time)
+            video_compose.set_data_start_time(timer)
             self.show_frame()
             self.m_slider1.SetRange(0, video_compose.video_reader.get_frames_count())
 
@@ -85,49 +88,90 @@ class main_frame(main.main_frame):
         self.show_frame()
 
     def m_button8OnButtonClick(self, event):
-        global time
-        time = video_compose.video_reader.get_position_in_ms()
-        self.m_spinCtrl1.SetValue(time)
-        video_compose.set_data_start_time(time)
+        global timer
+        timer = video_compose.video_reader.get_position_in_ms()
+        self.m_spinCtrl1.SetValue(timer)
+        video_compose.set_data_start_time(timer)
         self.show_frame()
 
     def m_spinCtrl1OnSpinCtrl(self, event):
-        global time
-        time = self.m_spinCtrl1.GetValue()
-        video_compose.set_data_start_time(time)
+        global timer
+        timer = self.m_spinCtrl1.GetValue()
+        video_compose.set_data_start_time(timer)
         self.show_frame()
 
     def m_spinCtrl1OnTextEnter(self, event):
-        global time
-        time = self.m_spinCtrl1.GetValue()
-        video_compose.set_data_start_time(time)
+        global timer
+        timer = self.m_spinCtrl1.GetValue()
+        video_compose.set_data_start_time(timer)
         self.show_frame()
 
     def m_button1OnButtonClick(self, event):
         global data_file
         global video_file
         global video_compose
-        global time
+        global timer
         #if data_file=="" or video_file =="":
         if video_compose != None:
-            video_compose.set_data_start_time(time)
-            working = progress_dialog(self)
-            working.Show(True)
-            video_compose.start_composing()
-            working.Hide()
+            video_compose.set_data_start_time(timer)
+            self.working.Show(True)
+            thread.start_new_thread(self.working.update, (video_compose,))
+            thread.start_new_thread(video_compose.start_composing, ())
+            # video_compose.start_composing()
+
+    def pb_radioBtn1OnRadioButton(self, event):
+        # TODO: Implement pb_radioBtn1OnRadioButton
+        pass
+
+    def pb_radioBtn2OnRadioButton(self, event):
+        # TODO: Implement pb_radioBtn2OnRadioButton
+        pass
+
+    def pb_radioBtn3OnRadioButton(self, event):
+        # TODO: Implement pb_radioBtn3OnRadioButton
+        pass
+
+    def pb_radioBtn4OnRadioButton(self, event):
+        # TODO: Implement pb_radioBtn4OnRadioButton
+        pass
+
+    def pic1OnLeftDClick(self, event):
+        # TODO: Implement pic1OnLeftDClick
+        pass
+
+    def pic1TextOnLeftDClick(self, event):
+        # TODO: Implement pic1TextOnLeftDClick
+        pass
+
+    def pic2OnLeftDClick(self, event):
+        # TODO: Implement pic2OnLeftDClick
+        pass
+
+    def pic2TextOnLeftDClick(self, event):
+        # TODO: Implement pic2TextOnLeftDClick
+        pass
+
+    def pic3OnLeftDClick(self, event):
+        # TODO: Implement pic3OnLeftDClick
+        pass
+
+    def pic3TextOnLeftDClick(self, event):
+        # TODO: Implement pic3TextOnLeftDClick
+        pass
+
 
     def show_frame(self):
         global video_compose
-        global time
+        global timer
         global frame
         global curr_time
-        #time = strftime("%H:%M:%S +0000", curr_time)
+        # timer = strftime("%H:%M:%S +0000", curr_time)
         timestr = help.time_from_ms(int(curr_time))
         #self.m_staticText6.SetLabelText("00:00:000")
         self.m_staticText6.SetLabelText(timestr)
 
         if video_compose is not None:
-            video_compose.set_data_start_time(time)
+            video_compose.set_data_start_time(timer)
             #frame = video_compose.video_reader.read_frame_at_time(curr_time)
             frame = video_compose.get_handled_frame(curr_time)
             frame = cv2.resize(frame, (0, 0), fx=0.26, fy=0.26)
@@ -145,9 +189,10 @@ class main_frame(main.main_frame):
         return wxBitmap
 
 
-class choose_files(main.Choose_files):
+class choose_files(main.choose_files):
     def __init__(self, parent):
-        main.Choose_files.__init__(self, parent)
+        main.choose_files.__init__(self, parent)
+        self.parent = parent
 
     # Handlers for Choose_files events.
     def video_filePickerOnFileChanged(self, event):
@@ -175,7 +220,7 @@ class choose_files(main.Choose_files):
         global video_file
         global video_compose
         global dir_path
-        global time
+        global timer
         global autosync
         if data_file != "" and video_file != "" and dir_path != "":
             output = ""
@@ -191,9 +236,9 @@ class choose_files(main.Choose_files):
 
             self.Hide()
             if autosync:
-                time = auto_sync.sync(video_compose.video_reader)
-                self.parent.m_spinCtrl1.SetValue(int(time))
-                video_compose.set_data_start_time(int(time))
+                timer = auto_sync.sync(video_compose.video_reader)
+                self.parent.m_spinCtrl1.SetValue(int(timer))
+                video_compose.set_data_start_time(int(timer))
             self.parent.show_frame()
             self.parent.m_slider1.SetRange(0, video_compose.video_reader.get_frames_count())
             timestr = help.time_from_ms((int(video_compose.video_reader.get_frames_count()) // int(
@@ -205,6 +250,7 @@ class choose_files(main.Choose_files):
 class error_dialog(main.error_dialog):
     def __init__(self, parent):
         main.error_dialog.__init__(self, parent)
+        self.parent = parent
 
     # Handlers for error_dialog events.
     def m_button4OnButtonClick(self, event):
@@ -215,7 +261,18 @@ class error_dialog(main.error_dialog):
 class progress_dialog(main.progress_dialog):
     def __init__(self, parent):
         main.progress_dialog.__init__(self, parent)
+        self.parent = parent
 
+    def update(self, vc):
+        fc = int(vc.frames_count)
+        print fc
+        self.m_gauge1.SetRange(fc)
+        cf = 0
+        while cf < fc:
+            cf = int(vc.curr_frame)
+            self.m_gauge1.SetValue(cf)
+            time.sleep(1)
+        self.parent.working.Hide()
 
 app = wx.App(False)  # Create a new app, don't redirect stdout/stderr to a window.
 frame1 = main_frame(None)
