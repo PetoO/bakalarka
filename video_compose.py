@@ -10,7 +10,7 @@ import video_writer as vw
 
 class Video_compose():
     def __init__(self, file, video, handler="simple_frame_handler", output="output.avi"):
-        self.playback_speed = 10
+        self.playback_speed = 1  # todo
         self.data_start_time = 0
         self.video_start_time = 0
         self.precision = 0.5

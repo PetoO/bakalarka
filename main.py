@@ -21,7 +21,7 @@ video_compose = None
 frame = None
 autosync = False
 frame_handlers = ["simple_frame_handler", "simple_frame_handler", "simple_frame_handler"]
-
+#
 video_file = "C:\Users\peto\Desktop\hero.mp4"
 data_file = "C:\Users\peto\Desktop\hero.tcx"
 dir_path = 'C:\Users\peto\Desktop\output.avi'
@@ -43,11 +43,11 @@ class main_frame(main.main_frame):
             self.m_slider11.SetRange(0, video_compose.video_reader.get_frames_count())
 
     # Handlers for main_frame events.
-    def m_slider1OnScroll(self, event):
+    def m_slider11OnScroll(self, event):
         # TODO: Implement m_slider1OnScroll
         pass
 
-    def m_slider1OnScrollChanged(self, event):
+    def m_slider11OnScrollChanged(self, event):
         global curr_time
         video_compose.video_reader.set_position_frame(self.m_slider1.GetValue())
         curr_time = video_compose.video_reader.get_position_in_ms()
@@ -61,7 +61,7 @@ class main_frame(main.main_frame):
         if curr_time < 0:
             curr_time = 0
             #self.m_spinCtrl1.SetValue(0)
-        self.m_slider1.SetValue(video_compose.video_reader.get_position_frames())
+        self.m_slider11.SetValue(video_compose.video_reader.get_position_frames())
         self.show_frame()
         #todo show frame
 
@@ -71,7 +71,7 @@ class main_frame(main.main_frame):
         if curr_time < 0:
             curr_time = 0
             #self.m_spinCtrl1.SetValue(0)
-        self.m_slider1.SetValue(video_compose.video_reader.get_position_frames())
+        self.m_slider11.SetValue(video_compose.video_reader.get_position_frames())
         self.show_frame()
         #todo show frame
 
@@ -79,7 +79,7 @@ class main_frame(main.main_frame):
         global curr_time
         curr_time += 150
         #self.m_spinCtrl1.SetValue(curr_time)
-        self.m_slider1.SetValue(video_compose.video_reader.get_position_frames())
+        self.m_slider11.SetValue(video_compose.video_reader.get_position_frames())
         #todo show frame
         self.show_frame()
 
@@ -87,7 +87,7 @@ class main_frame(main.main_frame):
         global curr_time
         curr_time += 2000
         # self.m_spinCtrl1.SetValue(curr_time)
-        self.m_slider1.SetValue(video_compose.video_reader.get_position_frames())
+        self.m_slider11.SetValue(video_compose.video_reader.get_position_frames())
         #todo show frame
         self.show_frame()
 

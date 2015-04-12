@@ -70,4 +70,7 @@ def scale_image(img, w=0, h=-1):
     return img2
 
 
+def loadJSON(file):
+    pass
+
     # print scale_image(cv2.imread("hr.png"), 1000,5).shape

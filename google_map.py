@@ -12,7 +12,7 @@ class Google_map:
         self.api_key = "&key=AIzaSyD0LgOSvwSgdKrp16kGeyDXgOfmD_pk9yg"
         self.size = "&size=250x250"
         self.data = data
-        self.zoom = 17
+        self.zoom = "&zoom=15"
         self.coords = self.get_points()
         self.path = "&path=color:0x00ff00Ff|weight:5%7Cenc:" + self.encode_coords(self.coords)
         self.current_png = None
@@ -28,7 +28,7 @@ class Google_map:
         else:
             self.set_current_location(x, y)
             self.set_url()
-            # print self.url
+            print self.url
             req = urlopen(self.url)
             print
             self.url
@@ -37,17 +37,21 @@ class Google_map:
             print
             self.current_png.size
             return self.current_png
+        return None
 
 
     def set_map_type(self, type):
         self.map_type = type
+
+    def set_center(self):
+        self.center = "&center=" + self.current_location
 
     def set_api_key(self, key):
         self.api_key = "&key=" + str(key)
         return
 
     def set_url(self):
-        self.url = "https://maps.googleapis.com/maps/api/staticmap?maptype=" + self.map_type + self.api_key + self.size + self.marker + self.current_location + self.path
+        self.url = "https://maps.googleapis.com/maps/api/staticmap?maptype=" + self.map_type + self.zoom + self.api_key + self.center + self.size + self.marker + self.current_location + self.path
 
     def add(self, to, term, value):
         return
@@ -60,6 +64,7 @@ class Google_map:
 
     def set_current_location(self, x, y):
         self.current_location = str(x) + "," + str(y)
+        self.set_center()
         # 19.538871,48.555246
         return
 
