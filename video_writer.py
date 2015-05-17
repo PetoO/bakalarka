@@ -16,27 +16,16 @@ class Video_writer():
         self.audiofile = "tempaudio.mp3"
         self.videosource = videosource
         self.tempresult = "tempres.avi"
+        try:
+            if path.exists(self.tempresult):
+                remove(self.tempresult)
+        except WindowsError:
+            print "Tempresult is being used"
+
+
         self.result = result
         fourcc = VideoWriter_fourcc(*'XVID')
         self.out = VideoWriter(self.tempresult, fourcc, fps, (int(width), int(height)))
-
-        # test
-        #self.img=pc.app()
-        #self.start = False
-        #self.app = wx.App(False)  # Create a new app, don't redirect stdout/stderr to a window.
-        #self.frame = pc.picture(None)  # A Frame is a top-level window.
-        #myThreadOb = MyThread(self.frame, self.app)
-        #myThreadOb.start()
-        # #test
-
-    def start_window(self):
-        pass
-        # test
-        # app = wx.App(False)  # Create a new app, don't redirect stdout/stderr to a window.
-        # self.frame = pc.picture(None)  # A Frame is a top-level window.
-        # self.frame.Show(True)  # Show the frame.
-        # app.MainLoop()
-        #test
 
     def get_audio_clip(self):
         if path.exists(self.audiofile):

@@ -31,7 +31,7 @@ class Video_compose():
 
     def load_handler(self, handler=""):
         # pass
-        #TODO exception ok?
+        # TODO exception ok?
         if handler == "":
             handler = "simple_frame_handler"
         hndl = __import__(handler)
@@ -66,9 +66,9 @@ class Video_compose():
         a = time.time()
         b = self.video_reader.get_position_in_ms()
         last = 0
-        print "For cycle begining."
+        # print "For cycle begining."
         for i in range(0, int(self.frames_count)):
-            print "Handling frame:" + str(i)
+            #print "Handling frame:" + str(i)
             self.curr_frame += 1
             # curr_video_time = self.video_reader.get_position_in_ms()
             if i % self.playback_speed is not 0:
@@ -78,7 +78,7 @@ class Video_compose():
             if frame is None:
                 print "Frame is None"
                 break
-            print "Writing frame"
+            #print "Writing frame"
             self.write_frame(frame)
             # print b
             if b - last > self.precision:
@@ -86,7 +86,7 @@ class Video_compose():
                 last = b
             b = self.video_reader.get_position_in_ms()
         print time.time() - a
-        self.video_writer.finish_video(False)
+        self.video_writer.finish_video(self.playback_speed == 1)
         return
 
     def quit_composing(self):
@@ -112,6 +112,6 @@ class Video_compose():
 
         # a= time.time()
         # v=Video_compose("test2.tcx", "test2.mp4")
-        #print time.time()-a
+        # print time.time()-a
         #v.start_composing()
         #print time.time()-a

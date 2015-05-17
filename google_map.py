@@ -1,6 +1,6 @@
 __author__ = 'peto'
 
-from cv2 import imdecode
+from cv2 import imdecode, imread
 from urllib import urlopen
 import numpy as np
 
@@ -16,6 +16,7 @@ class Google_map:
         self.coords = self.get_points()
         self.path = "&path=color:0x00ff00Ff|weight:5%7Cenc:" + self.encode_coords(self.coords)
         self.current_png = None
+        self.no_map = imread("no_map.png")
         # if len(coords)!=0:
         self.current_location = str(self.coords[0][0]) + "," + str(self.coords[0][1])
         self.center = 'center=48.555224,19.538875&zoom=16&'
@@ -26,17 +27,20 @@ class Google_map:
         if (self.current_location == str(x) + "," + str(y) and self.current_png is not None):
             return self.current_png
         else:
-            self.set_current_location(x, y)
-            self.set_url()
-            print self.url
-            req = urlopen(self.url)
-            print
-            self.url
-            arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
-            self.current_png = imdecode(arr, -1)
-            print
-            self.current_png.size
-            return self.current_png
+            try:
+                self.set_current_location(x, y)
+                self.set_url()
+                print self.url
+                req = urlopen(self.url)
+                print
+                self.url
+                arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+                self.current_png = imdecode(arr, -1)
+                print
+                self.current_png.size
+                return self.current_png
+            except IOError:
+                return self.no_map
         return None
 
 

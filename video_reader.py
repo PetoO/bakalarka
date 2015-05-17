@@ -15,23 +15,10 @@ class Video_reader:
     def read_frame(self, frame=-1):
         if frame == -1:
             ret, frame = self.video.read()
-            # self.curr_frame+=1
             if ret:
                 return frame
         self.video.set(1, int(frame))
-        #self.curr_frame=frame
-        ret, frame = self.video.read()
-        if ret:
-            return frame
-
-    def read_next_frame(self, frame=-1):
-        if frame == -1 or frame == 1:
-            self.curr_frame += 1
-            ret, frame = self.video.read()
-            if ret:
-                return frame
-        self.curr_frame += frame
-        self.video.set(1, int(self.curr_frame))
+        # self.curr_frame=frame
         ret, frame = self.video.read()
         if ret:
             return frame
@@ -47,13 +34,13 @@ class Video_reader:
 
     def set_position_frame(self, frame):
         self.video.set(1, frame)
-        #self.curr_frame = frame
+        # self.curr_frame = frame
 
     def get_position_in_ms(self):
         return self.video.get(0)
 
     def get_position_frames(self):
-        #self.curr_frame = self.video.get(1)
+        # self.curr_frame = self.video.get(1)
         return self.video.get(1)
 
     def get_position_ratio(self):
@@ -86,7 +73,7 @@ class Video_reader:
 # v = Video_reader("test2.mp4")
 # i = 0
 # print v.get_frames_count()
-#while(v.is_open()):
+# while(v.is_open()):
 #    print "i = " + str(i) + ", frame : "+ str(v.get_position_frames()) + ", time : " + str(v.get_position_in_ms())
 #    v.read_frame()
 #    i+=1

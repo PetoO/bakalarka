@@ -21,9 +21,7 @@ v.set_data_start_time(
     ts)  # synchronizacia dat s videom, v podstate je to rozdiel medzi zaciatkom nahravania dat a nahravania videa
 # v.set_video_start_time(7000)
 # pre nastavenia casu videa je potrebne spravit oseknutie zvuku napr, upravit metody niektore atd
-print
-time() - a
-v.start_composing()  # render videa
+print time() - a
+# v.start_composing()  # render videa
 
-print
-time() - a
+print time() - a

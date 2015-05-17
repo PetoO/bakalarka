@@ -20,7 +20,8 @@ curr_time = 0
 video_compose = None
 frame = None
 autosync = False
-frame_handlers = ["simple_frame_handler", "simple_frame_handler", "simple_frame_handler"]
+frame_handlers = ["simple_frame_handler", "simple_frame_handler2", "simple_frame_handler"]
+blocked_GUI = False
 #
 video_file = "C:\Users\peto\Desktop\hero.mp4"
 data_file = "C:\Users\peto\Desktop\hero.tcx"
@@ -40,89 +41,96 @@ class main_frame(main.main_frame):
 
             video_compose.set_data_start_time(timer)
             self.show_frame()
-            self.m_slider11.SetRange(0, video_compose.video_reader.get_frames_count())
+            self.time_slider.SetRange(0, video_compose.video_reader.get_frames_count())
+        self.show_status_bar(False)
+
 
     # Handlers for main_frame events.
-    def m_slider11OnScroll(self, event):
-        # TODO: Implement m_slider1OnScroll
+    def time_sliderOnScroll(self, event):
+        # TODO: Implement time_sliderOnScroll
         pass
 
-    def m_slider11OnScrollChanged(self, event):
+    def time_sliderOnScrollChanged(self, event):
         global curr_time
-        video_compose.video_reader.set_position_frame(self.m_slider1.GetValue())
+        video_compose.video_reader.set_position_frame(self.time_slider.GetValue())
         curr_time = video_compose.video_reader.get_position_in_ms()
         print
         curr_time
+
         self.show_frame()
 
-    def m_button7OnButtonClick(self, event):
+    def prevD_buttonOnButtonClick(self, event):
         global curr_time
         curr_time -= 2000
         if curr_time < 0:
             curr_time = 0
-            #self.m_spinCtrl1.SetValue(0)
-        self.m_slider11.SetValue(video_compose.video_reader.get_position_frames())
+            # self.time_spinner.SetValue(0)
+        self.time_slider.SetValue(video_compose.video_reader.get_position_frames())
         self.show_frame()
-        #todo show frame
+        # todo show frame
 
-    def m_button4OnButtonClick(self, event):
+    def prev_buttonOnButtonClick(self, event):
         global curr_time
         curr_time -= 150
         if curr_time < 0:
             curr_time = 0
-            #self.m_spinCtrl1.SetValue(0)
-        self.m_slider11.SetValue(video_compose.video_reader.get_position_frames())
+            # self.time_spinner.SetValue(0)
+        self.time_slider.SetValue(video_compose.video_reader.get_position_frames())
         self.show_frame()
-        #todo show frame
+        # todo show frame
 
-    def m_button5OnButtonClick(self, event):
+    def next_buttonOnButtonClick(self, event):
         global curr_time
         curr_time += 150
-        #self.m_spinCtrl1.SetValue(curr_time)
-        self.m_slider11.SetValue(video_compose.video_reader.get_position_frames())
+        # self.time_spinner.SetValue(curr_time)
+        self.time_slider.SetValue(video_compose.video_reader.get_position_frames())
         #todo show frame
         self.show_frame()
 
-    def m_button6OnButtonClick(self, event):
+    def nextD_buttonOnButtonClick(self, event):
         global curr_time
         curr_time += 2000
-        # self.m_spinCtrl1.SetValue(curr_time)
-        self.m_slider11.SetValue(video_compose.video_reader.get_position_frames())
-        #todo show frame
+        # self.time_spinner.SetValue(curr_time)
+        self.time_slider.SetValue(video_compose.video_reader.get_position_frames())
+        # todo show frame
         self.show_frame()
 
-    def m_button8OnButtonClick(self, event):
+    def set_start_time_buttonOnButtonClick(self, event):
         global timer
         timer = video_compose.video_reader.get_position_in_ms()
-        self.m_spinCtrl1.SetValue(timer)
+        self.time_spinner.SetValue(timer)
         video_compose.set_data_start_time(timer)
         self.show_frame()
 
-    def m_spinCtrl1OnSpinCtrl(self, event):
+    def time_spinnerOnSpinCtrl(self, event):
         global timer
-        timer = self.m_spinCtrl1.GetValue()
+        timer = self.time_spinner.GetValue()
         video_compose.set_data_start_time(timer)
         self.show_frame()
 
-    def m_spinCtrl1OnTextEnter(self, event):
+    def time_spinnerOnTextEnter(self, event):
         global timer
-        timer = self.m_spinCtrl1.GetValue()
+        timer = self.time_spinner.GetValue()
         video_compose.set_data_start_time(timer)
         self.show_frame()
 
-    def m_button1OnButtonClick(self, event):
+    def main_buttonOnButtonClick(self, event):
+        print "start button"
         global data_file
         global video_file
         global video_compose
         global timer
-        #if data_file=="" or video_file =="":
+        # if data_file=="" or video_file =="":
         if video_compose != None:
             video_compose.set_data_start_time(timer)
             # self.working.Show(True)
             #thread.start_new_thread(self.working.update, (video_compose,))
+            self.block_GUI(False)
+            self.show_status_bar(True)
             thread.start_new_thread(self.update, ())
             thread.start_new_thread(video_compose.start_composing, ())
-            # video_compose.start_composing()
+            #video_compose.start_composing()
+
 
     def pb_radioBtn1OnRadioButton(self, event):
         global video_compose
@@ -140,7 +148,6 @@ class main_frame(main.main_frame):
         global video_compose
         video_compose.set_playback_speed(10)
 
-
     def pic1OnLeftUp(self, event):
         self.pic1Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
         self.pic2Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
@@ -148,6 +155,7 @@ class main_frame(main.main_frame):
         global video_compose
         global frame_handlers
         video_compose.load_handler(frame_handlers[0])
+        self.show_frame()
         self.Refresh()
 
     def pic1TextOnLeftUp(self, event):
@@ -157,6 +165,7 @@ class main_frame(main.main_frame):
         global video_compose
         global frame_handlers
         video_compose.load_handler(frame_handlers[0])
+        self.show_frame()
         self.Refresh()
 
     def pic2OnLeftUp(self, event):
@@ -166,6 +175,7 @@ class main_frame(main.main_frame):
         global video_compose
         global frame_handlers
         video_compose.load_handler(frame_handlers[1])
+        self.show_frame()
         self.Refresh()
 
     def pic2TextOnLeftUp(self, event):
@@ -175,6 +185,7 @@ class main_frame(main.main_frame):
         global video_compose
         global frame_handlers
         video_compose.load_handler(frame_handlers[1])
+        self.show_frame()
         self.Refresh()
 
 
@@ -185,6 +196,7 @@ class main_frame(main.main_frame):
         global video_compose
         global frame_handlers
         video_compose.load_handler(frame_handlers[2])
+        self.show_frame()
         self.Refresh()
 
     def pic3TextOnLeftUp(self, event):
@@ -194,6 +206,7 @@ class main_frame(main.main_frame):
         global video_compose
         global frame_handlers
         video_compose.load_handler(frame_handlers[2])
+        self.show_frame()
         self.Refresh()
 
 
@@ -204,23 +217,26 @@ class main_frame(main.main_frame):
         global curr_time
         # timer = strftime("%H:%M:%S +0000", curr_time)
         timestr = help.time_from_ms(int(curr_time))
-        #self.m_staticText6.SetLabelText("00:00:000")
-        self.m_staticText61.SetLabelText(timestr)
+        # self.m_staticText6.SetLabelText("00:00:000")
+        self.curr_time.SetLabelText(timestr)
 
         if video_compose is not None:
             video_compose.set_data_start_time(timer)
             #frame = video_compose.video_reader.read_frame_at_time(curr_time)
             frame = video_compose.get_handled_frame(curr_time)
-            frame = cv2.resize(frame, (0, 0), fx=0.26, fy=0.26)
+            #frame = cv2.resize(frame, (0, 0), fx=0.26, fy=0.26)
+            frame = help.scale_image(frame, 540, 255)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img = self.GetBitmap(frame)
-            self.m_bitmap11.SetBitmap(img)
+            self.video_image.SetBitmap(img)
             self.Refresh()
+            self.Fit()
+            self.Layout()
 
     def GetBitmap(self, array, width=1920, height=1080, colour=(0, 0, 0)):
-        #
         height, width = frame.shape[:2]
         image = wx.EmptyImage(width, height)
-        #image = wx.Image()
+        # image = wx.Image()
         image.SetData(array.tostring())
         wxBitmap = image.ConvertToBitmap()  # OR:  wx.BitmapFromImage(image)
         return wxBitmap
@@ -244,6 +260,32 @@ class main_frame(main.main_frame):
         self.statusBar.Show(False)
         self.statusBarText.Show(False)
         self.Refresh()
+
+    def block_GUI(self, type=False):
+        self.time_slider.Enable(type)
+        self.prev_button.Enable(type)
+        self.prevD_button.Enable(type)
+        self.next_button.Enable(type)
+        self.nextD_button.Enable(type)
+        self.set_start_time_button.Enable(type)
+        self.time_spinner.Enable(type)
+        self.pb_radioBtn1.Enable(type)
+        self.pb_radioBtn2.Enable(type)
+        self.pb_radioBtn3.Enable(type)
+        self.pb_radioBtn4.Enable(type)
+        self.pic1.Enable(type)
+        self.pic2.Enable(type)
+        self.pic3.Enable(type)
+        self.pic1Text.Enable(type)
+        self.pic2Text.Enable(type)
+        self.pic3Text.Enable(type)
+
+    def show_status_bar(self, type):
+        self.statusBar.Show(type)
+        self.statusBarText.Show(type)
+        self.statusBarPercentage.Show(type)
+        self.Fit()
+        self.Layout()
 
 
 class choose_files(main.choose_files):
@@ -285,7 +327,7 @@ class choose_files(main.choose_files):
                 # output = dir_path + "\\" + "output.avi"
                 output = os.path.normpath(os.path.join(dir_path, 'output.avi'))
             else:
-                #output = dir_path + "\\" + self.m_textCtrl1.GetValue() + ".avi"
+                # output = dir_path + "\\" + self.m_textCtrl1.GetValue() + ".avi"
                 output = os.path.normpath(os.path.join(dir_path, self.m_textCtrl1.GetValue() + ".avi"))
             # 'C:\Users\peto\Desktop\output.avi'
             video_compose = vc.Video_compose(data_file, video_file, "simple_frame_handler",
@@ -294,13 +336,13 @@ class choose_files(main.choose_files):
             self.Hide()
             if autosync:
                 timer = auto_sync.sync(video_compose.video_reader)
-                self.parent.m_spinCtrl1.SetValue(int(timer))
+                self.parent.time_spinner.SetValue(int(timer))
                 video_compose.set_data_start_time(int(timer))
             self.parent.show_frame()
-            self.parent.m_slider11.SetRange(0, video_compose.video_reader.get_frames_count())
+            self.parent.time_slider.SetRange(0, video_compose.video_reader.get_frames_count())
             timestr = help.time_from_ms((int(video_compose.video_reader.get_frames_count()) // int(
                 video_compose.video_reader.get_fps())) * 1000)
-            self.parent.m_staticText71.SetLabelText(timestr)
+            self.parent.end_time.SetLabelText(timestr)
 
     def choose_filesOnClose(self, event):
         self.MakeModal(False)
@@ -315,8 +357,8 @@ class error_dialog(main.error_dialog):
         self.parent = parent
 
     # Handlers for error_dialog events.
-    def m_button4OnButtonClick(self, event):
-        # TODO: Implement m_button4OnButtonClick
+    def prev_buttonOnButtonClick(self, event):
+        # TODO: Implement prev_buttonOnButtonClick
         pass
 
 
@@ -335,6 +377,7 @@ class progress_dialog(main.progress_dialog):
             self.m_gauge1.SetValue(cf)
             time.sleep(1)
         self.parent.working.Hide()
+
 
 app = wx.App(False)  # Create a new app, don't redirect stdout/stderr to a window.
 frame1 = main_frame(None)
