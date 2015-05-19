@@ -18,18 +18,11 @@ def sync(vr):
 
 
 def _get_time(vr):
-    # data = "C:\Users\peto\Desktop\u.png"
-    # im1 = cv2.imread(data,0)
-
     trshld = 0.75
     trshld1 = 0.60
-    res = vr.get_frame_width() * vr.get_frame_height()
     t = 0
     tl = int((vr.get_frames_count() * 1000) / vr.get_fps())
-    # im1 = None
     hst1 = None
-    #im2 = vr.read_frame_at_time(t)
-    im3 = None
 
     detected = False
     while not detected:
@@ -39,17 +32,10 @@ def _get_time(vr):
             detected = True
             print
             "I did not find sync sequence!"
-        #print t
-        #print("as")
         try:
             pic = vr.read_frame_at_time(t)
-            #print "readed"
             im1 = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
-            #print "gray"
-            #cv2.imshow("sss", im1 );
-            #hst1 = cv2.calcHist([im1],[0],None,[256],[0,256]) #TODO sometimes fails
             hst1, _ = np.histogram(im1.ravel(), 256, [0, 256])
-            #print "hst1"
         except:
             print
             "Unexpected error:", sys.exc_info()[0]
@@ -62,7 +48,7 @@ def _get_time(vr):
                     detected = True
                     break
                 if ta + 15000 <= t:
-                    #zatemnena obrazovka by nemala byt dlhsia ako 15 sekund
+                    # zatemnena obrazovka by nemala byt dlhsia ako 15 sekund
                     break
                 pic = vr.read_frame_at_time(t)
                 im1 = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
@@ -70,6 +56,6 @@ def _get_time(vr):
                 if hst1[0] < (tl * trshld1):
                     detected = True
 
-                    #print "finded"
+                    # print "finded"
 
     return t

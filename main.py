@@ -23,9 +23,9 @@ autosync = False
 frame_handlers = ["simple_frame_handler", "simple_frame_handler2", "simple_frame_handler"]
 blocked_GUI = False
 #
-video_file = "C:\Users\peto\Desktop\hero.mp4"
-data_file = "C:\Users\peto\Desktop\hero.tcx"
-dir_path = 'C:\Users\peto\Desktop\output.avi'
+# video_file = "C:\Users\peto\Desktop\hero.mp4"
+# data_file = "C:\Users\peto\Desktop\hero.tcx"
+# dir_path = 'C:\Users\peto\Desktop\output.avi'
 
 
 class main_frame(main.main_frame):
@@ -324,16 +324,18 @@ class choose_files(main.choose_files):
         if data_file != "" and video_file != "" and dir_path != "":
             output = ""
             if self.m_textCtrl1.GetValue() == "":
-                # output = dir_path + "\\" + "output.avi"
                 output = os.path.normpath(os.path.join(dir_path, 'output.avi'))
             else:
-                # output = dir_path + "\\" + self.m_textCtrl1.GetValue() + ".avi"
                 output = os.path.normpath(os.path.join(dir_path, self.m_textCtrl1.GetValue() + ".avi"))
-            # 'C:\Users\peto\Desktop\output.avi'
-            video_compose = vc.Video_compose(data_file, video_file, "simple_frame_handler",
-                                             output)
+            video_compose = vc.Video_compose(data_file, video_file, "simple_frame_handler", output)
+            if video_compose.data_collection.parsed_data == None:
+                video_compose.quit_composing()
+                # todo show error
+                return
 
             self.Hide()
+            self.parent.block_GUI(True)
+            self.MakeModal(False)
             if autosync:
                 timer = auto_sync.sync(video_compose.video_reader)
                 self.parent.time_spinner.SetValue(int(timer))
@@ -345,9 +347,10 @@ class choose_files(main.choose_files):
             self.parent.end_time.SetLabelText(timestr)
 
     def choose_filesOnClose(self, event):
+        if data_file == "" and video_file == "" and dir_path == "":
+            self.parent.Close()
+
         self.MakeModal(False)
-        # if data_file != "" | video_file != "" | dir_path != "":
-        # self.parent.Close()
         event.Skip()
 
 
@@ -358,8 +361,7 @@ class error_dialog(main.error_dialog):
 
     # Handlers for error_dialog events.
     def prev_buttonOnButtonClick(self, event):
-        # TODO: Implement prev_buttonOnButtonClick
-        pass
+        self.Close()
 
 
 class progress_dialog(main.progress_dialog):

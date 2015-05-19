@@ -30,7 +30,8 @@ class Video_compose():
         # self.handler = sfh.Simple_frame_handler(self.video_reader, self.data_collection)
 
     def load_handler(self, handler=""):
-        # pass
+        if self.data_collection.parsed_data == None:
+            return
         # TODO exception ok?
         if handler == "":
             handler = "simple_frame_handler"
@@ -39,9 +40,8 @@ class Video_compose():
             hndl = __import__(handler)
             new = getattr(hndl, handler.capitalize())
             self.handler = new(self.video_reader, self.data_collection)
-        except ImportError:
-            print ImportError.message
-        else:
+        except:
+            print "Error while loading handler."
             return
 
     def set_playback_speed(self, speed=1):
@@ -94,7 +94,7 @@ class Video_compose():
         self.video_reader.set_position_frame(0)
 
     def handle_frame(self, frame, data):
-        if frame is not None:
+        if frame is not None and self.handler is not None:
             return self.handler.create_frame(frame, data)
         return None
 

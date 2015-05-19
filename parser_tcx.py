@@ -17,12 +17,11 @@ class TCX_parser:
             return None
         self.start_time = 0
 
-    def get_activity(self):
+    def get_data(self):
         if self.doc == None:
             return
         data = []
         self.start_time = int(self.get_time(self.get_activity_id()))
-        data.append(self.get_activity_name())
         data.append(self.start_time)
         activity = self.doc.getElementsByTagName("Activity")
         laps = activity.item(0).getElementsByTagName("Lap")
@@ -48,23 +47,29 @@ class TCX_parser:
     def get_lap(self, lap):
         data = []
         values = dict()
+        tracks = []
         track = []
 
         # getting information about given lap
-        if lap.getElementsByTagName("TotalTimeSeconds") != None:
-            values["TotalTimeSeconds"] = float(lap.getElementsByTagName("TotalTimeSeconds").item(0).firstChild.data)
-        if lap.getElementsByTagName("DistanceMeters") != None:
-            values["DistanceMeters"] = float(lap.getElementsByTagName("DistanceMeters").item(0).firstChild.data)
 
-        data.append(values)
+        # # todo prec toto
+        # if lap.getElementsByTagName("TotalTimeSeconds") != None:
+        # values["TotalTimeSeconds"] = float(lap.getElementsByTagName("TotalTimeSeconds").item(0).firstChild.data)
+        # if lap.getElementsByTagName("DistanceMeters") != None:
+        #     values["DistanceMeters"] = float(lap.getElementsByTagName("DistanceMeters").item(0).firstChild.data)
+
+
+        #data.append(values)
+
         track_elem = lap.getElementsByTagName("Track")
         if track_elem.length != None:
-            trackpoints = track_elem.item(0).getElementsByTagName("Trackpoint")
-            if trackpoints != None:
-                for trackpoint in trackpoints:
-                    track.append(self.get_trackpoint(trackpoint))
-        data.append(track)
-        return data
+            for t in track_elem:
+                trackpoints = t.getElementsByTagName("Trackpoint")
+                if trackpoints != None:
+                    for trackpoint in trackpoints:
+                        track.append(self.get_trackpoint(trackpoint))
+                        #data.append(track)
+        return track
 
     def get_trackpoint(self, trackpoint):
         values = dict()
@@ -72,10 +77,12 @@ class TCX_parser:
             values["Time"] = int(
                 self.get_time(trackpoint.getElementsByTagName("Time").item(0).firstChild.data) - self.start_time)
         if trackpoint.getElementsByTagName("Position").length != 0:
-            values["LatitudeDegrees"] = float(trackpoint.getElementsByTagName("Position").item(0).getElementsByTagName(
-                "LatitudeDegrees").item(0).firstChild.data)
-            values["LongitudeDegrees"] = float(trackpoint.getElementsByTagName("Position").item(0).getElementsByTagName(
-                "LongitudeDegrees").item(0).firstChild.data)
+            values["LatitudeDegrees"] = float(
+                trackpoint.getElementsByTagName("Position").item(0).getElementsByTagName("LatitudeDegrees").item(
+                    0).firstChild.data)
+            values["LongitudeDegrees"] = float(
+                trackpoint.getElementsByTagName("Position").item(0).getElementsByTagName("LongitudeDegrees").item(
+                    0).firstChild.data)
         else:
             values["LatitudeDegrees"] = 0
             values["LongitudeDegrees"] = 0

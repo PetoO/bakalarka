@@ -1,0 +1,43 @@
+@startuml
+
+class Video_compose{
+Object[] elementData
+size()
+}
+class Video_reader{
+
+}
+class Video_writer{
+
+}
+class GPX_parser{
+
+}
+class TCX_parser{
+
+}
+class KML_parser{
+
+}
+class Data_collection{
+
+}
+abstract class FrameHandler{
+
+}
+
+Data_collection *-- GPX_parser
+Data_collection *-- TCX_parser
+Data_collection *-- KML_parser
+
+
+Video_writer --* Video_compose
+Video_compose *-- Video_reader
+Video_compose o..> FrameHandler
+
+
+Video_compose *- Data_collection
+
+
+
+@enduml
