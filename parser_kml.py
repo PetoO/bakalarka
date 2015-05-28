@@ -12,8 +12,7 @@ class KML_parser:
             self.doc = minidom.parse(filename)
         except IOError:
             self.doc = None
-            print
-            "File doesn't exists or is invalid."
+            print "File doesn't exists or is invalid."
             return None
         self.start_time = 0
 
@@ -21,11 +20,11 @@ class KML_parser:
         if self.doc == None:
             return
         data = []
-        data.append(self.start_time)
+        # data.append(self.start_time)
         trk = self.doc.getElementsByTagName("gx:MultiTrack")
         for tr in trk:
             data.append(self.get_lap(tr))
-        data[0] = self.start_time
+        #data[0] = self.start_time
         return data
 
 
@@ -55,7 +54,7 @@ class KML_parser:
             values["Time"] = 0
         else:
             values["Time"] = int(self.get_time(time.firstChild.data) - self.start_time)
-        print self.start_time
+        # print self.start_time
 
         lon, lat, ele = coord.firstChild.data.split()
         values["LatitudeDegrees"] = float(lat)

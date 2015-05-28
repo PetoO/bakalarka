@@ -17,13 +17,17 @@ class Google_map:
         self.path = "&path=color:0x00ff00Ff|weight:5%7Cenc:" + self.encode_coords(self.coords)
         self.current_png = None
         self.no_map = imread("no_map.png")
+        self.current_png = self.no_map
         # if len(coords)!=0:
         self.current_location = str(self.coords[0][0]) + "," + str(self.coords[0][1])
         self.center = 'center=48.555224,19.538875&zoom=16&'
         self.marker = "&markers=size:small%7Ccolor:0xFF0000%7C"
+        self.timeout = 0
 
 
     def get_image(self, x, y):
+        if self.timeout == 10:
+            return self.no_map
         if (self.current_location == str(x) + "," + str(y) and self.current_png is not None):
             return self.current_png
         else:
@@ -31,16 +35,14 @@ class Google_map:
                 self.set_current_location(x, y)
                 self.set_url()
                 print self.url
-                req = urlopen(self.url)
-                print
-                self.url
+                req = urlopen(self.url, timeout=10)
                 arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
                 self.current_png = imdecode(arr, -1)
-                print
-                self.current_png.size
                 return self.current_png
-            except IOError:
+            except:
                 return self.no_map
+                self.timeout += 1
+                print self.timeout
         return None
 
 
@@ -61,10 +63,10 @@ class Google_map:
         return
 
     def set_zoom(self, zoom):
-        self.zoom = zoom
+        self.zoom = "&zoom=" + str(int(zoom))
 
     def set_size(self, x, y):
-        self.size = str(x) + "x" + str(y)
+        self.size = "&size=" + str(x) + "x" + str(y)
 
     def set_current_location(self, x, y):
         self.current_location = str(x) + "," + str(y)
@@ -74,7 +76,7 @@ class Google_map:
 
     def get_points(self):
         coords = []
-        for i in range(0, len(self.data.trackpoints)):
+        for i in range(0, len(self.data.trackpoints) - 1):
             # sys.stdout.write(str(data.trackpoints[i]["LatitudeDegrees"])+","+str(data.trackpoints[i]["LongitudeDegrees"])+"|")
             # print str(data.trackpoints[i]["LatitudeDegrees"])+","+str(data.trackpoints[i]["LongitudeDegrees"])+"|",
             coords.append((self.data.trackpoints[i]["LongitudeDegrees"], self.data.trackpoints[i]["LatitudeDegrees"]))

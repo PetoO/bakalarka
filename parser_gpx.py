@@ -21,12 +21,12 @@ class GPX_parser:
         if self.doc == None:
             return
         data = []
-        data.append(self.start_time)
+        # data.append(self.start_time)
         trk = self.doc.getElementsByTagName("trk")
         # print trk
         for tr in trk:
             data.append(self.get_lap(tr))
-        data[0] = self.start_time
+        #data[0] = self.start_time
         return data
 
 

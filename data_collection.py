@@ -6,10 +6,8 @@ from parser_kml import KML_parser as kml
 import numpy as np
 import math
 from scipy import interpolate
-# from scipy import optimize
 import time
 import helper
-# import sys
 
 
 class Data_collection:
@@ -23,32 +21,36 @@ class Data_collection:
                 parser = gpx(filename)
             elif ".kml" in filename.lower():
                 parser = kml(filename)
-
             self.parsed_data = parser.get_data()
         except:
             print ("Unknown Error while handlig data files!")
-        self.sensors = []
+            return
         last_n = 0
         self.laps = []
         self.trackpoints = []
         self.to_kph = True
-        # funckie pre interpolaciu rychlosti v danom case
         self.speed_interpolations = None
-        # print self.parsed_data
-        # ak sa data podarilo sparsovat mozem ich pripravit
+        # self.start_time = 0
+        self.end_time = 0
+        self.times = []
+        self.speeds = []
+        self.max_speed = 0
+        # if successful data parsing then continue with analysis
         if self.parsed_data != None:
             # print self.parsed_data
-            self.start_time = self.parsed_data[0]
+            #self.start_time = self.parsed_data[0]
             self.handle_data()
+            self.end_time = self.trackpoints[len(self.trackpoints) - 1]["Time"]
+            #print(self.end_time)
 
     def handle_data(self):
 
-        for x in range(1, len(self.parsed_data)):
+        for x in range(0, len(self.parsed_data)):
             # print len(self.parsed_data)
             # #print (self.parsed_data)
             self.laps.append(self.parsed_data[x])
             # print (self.laps)
-            #print self.parsed_data[x]
+            # print self.parsed_data[x]
             #self.laps[0]["Time"] = self.parsed_data[x][0]["Time"]
             self.handle_lap(self.parsed_data[x])
         # print self.trackpoints
@@ -60,7 +62,7 @@ class Data_collection:
         return
 
     def handle_lap(self, lap):
-        #print lap
+        # print lap
         altitudes = []
         for i in range(0, len(lap)):
             #print lap
@@ -92,85 +94,74 @@ class Data_collection:
         return altitudes
 
     # speed can differs from reality, it depends on frequency of gps data and its accuracy, so best option is to have speed data in your data file...
-    # but file format like .gpx doesnt support this option, so speed calculation from gps coordinates is must in some cases
-    # TODO improve this
+
     def calc_speed(self):
         buff = helper.Buff_avg(5, 1)
+        # buffer initialization
         for b in range(0, 5):
             buff.add_value(0)
-        times = []
-        speeds = []
-        lap_times = []
-        # for lap in self.laps:
-        # # print lap
-        #     lap_times.append(lap[0]["Time"])
-        # for i in range(0, len(lap_times)):
-        #     times = []
-        #     speeds = []
-        #     if i == len(lap_times) - 1:
-        #         last_lap = True
-        #     else:
-        #         last_lap = False
-        #     if last_lap:
-        #         index1 = self.get_trackpoint_id(lap_times[i])
-        #         index2 = len(self.trackpoints) - 1
-        #     else:
-        #         index1 = self.get_trackpoint_id(lap_times[i])
-        #         index2 = self.get_trackpoint_id(lap_times[i + 1]) - 1
         for i in range(0, len(self.trackpoints)):
-            # TODO now = if loop else loop - future maybe loop if else
             if "Speed" in self.trackpoints[i]:
-                speeds.append(self.trackpoints[i]["Speed"])
-                times.append(self.trackpoints[i]["Time"])
+                self.speeds.append(self.trackpoints[i]["Speed"])
+                self.times.append(self.trackpoints[i]["Time"])
             else:
                 self.trackpoints[i]["Speed"] = float(0)
                 j = i + 1
                 if j < len(self.trackpoints):
-                    R = 6371  # km
-                    dLat = math.radians(
-                        (self.trackpoints[i]["LatitudeDegrees"] - self.trackpoints[j]["LatitudeDegrees"]))
-                    dLon = math.radians(
-                        (self.trackpoints[i]["LongitudeDegrees"] - self.trackpoints[j]["LongitudeDegrees"]))
-                    lat1 = math.radians(self.trackpoints[i]["LatitudeDegrees"])
-                    lat2 = math.radians(self.trackpoints[i]["LatitudeDegrees"])
-                    a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.sin(dLon / 2) * math.sin(dLon / 2) * math.cos(
+                    trackpoint1 = self.trackpoints[i]
+                    trackpoint2 = self.trackpoints[j]
+                    r = 6371  # radius  km
+                    dlat = math.radians(trackpoint1["LatitudeDegrees"] - trackpoint2["LatitudeDegrees"])
+                    dlon = math.radians(trackpoint1["LongitudeDegrees"] - trackpoint2["LongitudeDegrees"])
+                    lat1 = math.radians(trackpoint1["LatitudeDegrees"])
+                    lat2 = math.radians(trackpoint1["LatitudeDegrees"])
+                    a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.sin(dlon / 2) * math.sin(dlon / 2) * math.cos(
                         lat1) * math.cos(lat2)
                     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-                    d = R * c
+                    d = r * c
 
-                    t = self.trackpoints[j]["Time"] - self.trackpoints[i]["Time"]
+                    t = trackpoint2["Time"] - trackpoint1["Time"]
                     s = ((d * 1000000) / t)
+                    speed = (buff.add_value(round(s * 3.6, 1)))
 
-                    speeds.append((buff.add_value(round(s * 3.6, 1))))
-                    print speeds
-                    times.append(self.trackpoints[i]["Time"])
+                    if speed <= 0:
+                        self.speeds.append(0)
+                    else:
+                        self.speeds.append(speed)
+                        if speed > self.max_speed:
+                            self.max_speed = speed
 
-
-
+                    self.times.append(trackpoint1["Time"])
         # interpolation
+        self.speed_interpolation = interpolate.interp1d(np.array(self.times), np.array(self.speeds), "cubic")
 
-        # x =
-        # y =
-        # print len(y)
-        # print len(x)
-        print len(times)
-        print len(speeds)
-        print (times)
-        print (speeds)
-        self.speed_interpolation = interpolate.interp1d(np.array(times), np.array(speeds), "cubic")
-        # print x
-        #print y
-        #print self.speed_interpolations[i](3000)
+        # for x in range(0,1000):
+        #     print x*100
+        #     print self.speed_interpolation(x*100)
+        #
+        # import matplotlib.pyplot as plt
+        # xnew = np.linspace(0,self.times[len(self.times)-1])
+        # yn= np.linspace(0,50,250)
+        # ff=interpolate.interp1d(self.times, self.speeds, kind='cubic')
+        # plt.plot(self.times,self.speed_interpolation(self.times))
+        # plt.axhline(0, color='k', linewidth=2)
+        # plt.axvline(57600, color='r')
+        # plt.xlabel("Time in sec")
+        # plt.ylabel("Speed in kph")
+        #
+        # plt.show()
+        # from scipy.interpolate import interp1d
+        #
+        # x = np.linspace(0, 10, 10)
+        # y = 2+np.cos(x**2.0)
+        # f2 = interp1d(x, y, kind='cubic')
+        #
+        # xnew = np.linspace(0, 10, 100)
+        # import matplotlib.pyplot as plt
+        # plt.plot(x,y,'o',xnew, f2(xnew),'-')
+        #
+        # plt.show()
 
-
-        # if len(speeds) >= 3:
-        # for k in range(1, len(speeds) - 1):
-        #        self.trackpoints[k + index1]["Speed"] = round(
-        #            ((float(speeds[k]) + float(speeds[k - 1]) + float(speeds[k + 1])) / 3), 1)
-        #        speeds[k] = round(((float(speeds[k]) + float(speeds[k - 1]) + float(speeds[k + 1])) / 3), 1)
-        #    self.trackpoints[index2]["Speed"] = round(
-        #        ((float(speeds[len(speeds) - 1]) + float(speeds[len(speeds) - 2])) / 2), 1)
-        #print "interpolation = " + str(len(self.speed_interpolations))
 
     def get_trackpoint_id(self, time):
         x = 0
@@ -183,12 +174,9 @@ class Data_collection:
         return -1
 
     def get_lap_id(self, time):
-        # print "time " + str(time)
         x = -1
         for t in range(0, len(self.laps)):
-            # print "lap time " + str(self.laps[t]["Time"])
             if time >= self.laps[t][0]["Time"]:
-                # print "True"
                 x = t
                 continue
             else:
@@ -198,28 +186,17 @@ class Data_collection:
     # this function returns all possible data at given time as dictionary
     def get_data_at(self, time):
         id = self.get_trackpoint_id(time)
-        # print "id = " +  str(id)
         if id == -1:
             return None
         lap_id = self.get_lap_id(time)
-        # print "lapid = " +  str(lap_id)
         if lap_id == -1:
             return None
         data = self.trackpoints[id]
         if id == len(self.trackpoints) - 1 or time == 0:
             return data
-
-        # data1 = self.trackpoints[id + 1]
-        # r1 = data["Speed"]
-        # r2 = data1["Speed"]
-        #t1 = data["Time"]
-        #t2 = data1["Time"]
-        # a = float(data["Speed"] + data1["Speed"])
-        #b = float(data["Time"]+ data1["Time"]) / float(time)
-        # data["Speed"] = round(((float(time - t1) / float(t2 - t1)) * float(r2 - r1)) + r1, 1)
-        speed = round(float(self.speed_interpolation(time)), 1)
+        speed = round(self.speed_interpolation(time), 1)
         if speed <= 0.0:
-            speed = 0.0
+            speed = 0.1
         data["Speed"] = speed
         return data
 
@@ -233,11 +210,20 @@ class Data_collection:
 # pass
 # fff=interpolate.interp1d(np.array([0, 0, 4731, 4734, 4739, 4743]), np.array([15.0, 23.2, 25.2, 25.7, 24.0, 23.5]), "cubic")
 # for fas in range (0,10000000):
-#     pass
+# pass
 # print "asdasdasdasdad"
 
-
-# data = Data_collection("gui.py")
+# from scipy.interpolate import interp1d
+# import matplotlib.pyplot as plt
+#data = Data_collection("VIRB.GPX")
+# print data.trackpoints
+# x = np.linspace(0, 10, 10)
+# y = np.cos(-x**2/8.0)
+# f = interp1d(x, y)
+# f2 = interp1d(x, y, kind='cubic')
+# xnew = np.linspace(0,10,40)
+# plt.plot(f2(xnew),'-')
+# plt.show()
 # a = time.time()
 # data.get_data_at(25000)
 # print time.time()-a
@@ -271,12 +257,15 @@ class Data_collection:
 #    if i == 10000:
 #        d=False
 # while (d):
-# data.get_data_at(round(((b - a) * 10000), 0))
-#   i+=1
-#   if i == 10000:
-#        d=False
-#for i in range(0, 1):
-# print data.get_data_at(round(((i) * 100), 0))
+#     data.get_data_at(round(((b - a) * 10000), 0))
+#     i+=1
+#     if i == 10000:
+#         d=False
+
+# for i in range(0, 1000):
+#     print (i) * 100
+#     print data.get_data_at(round(((i) * 100), 0))
+
 #print time.time() - a
 
 # x1 = [1., 0.88,  0.67,  0.50,  0.35,  0.27, 0.18,  0.11,  0.08,  0.04,  0.04,  0.02]

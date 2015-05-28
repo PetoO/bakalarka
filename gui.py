@@ -4,11 +4,15 @@
 ## Python code generated with wxFormBuilder (version Jun  5 2014)
 ## http://www.wxformbuilder.org/
 ##
-## PLEASE DO "NOT" EDIT THIS FILE!
 ###########################################################################
 
 import wx
 import wx.xrc
+import matplotlib
+
+matplotlib.use('WXAgg')
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+from matplotlib.figure import Figure
 
 ###########################################################################
 ## Class main_frame
@@ -37,6 +41,7 @@ class main_frame(wx.Frame):
 
         bSizer41.SetMinSize(wx.Size(530, -1))
         self.video_image = wx.StaticBitmap(self, wx.ID_ANY, wx.NullBitmap, wx.Point(0, 0), wx.Size(-1, -1), 0)
+        # self.video_image.SetMinSize( wx.Size( 540, 255 ) )
 
         bSizer41.Add(self.video_image, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
@@ -61,9 +66,9 @@ class main_frame(wx.Frame):
         self.end_time.Wrap(-1)
         gSizer41.Add(self.end_time, 0, wx.ALL | wx.ALIGN_RIGHT, 5)
 
-        bSizer51.Add(gSizer41, 1, wx.EXPAND, 5)
+        bSizer51.Add(gSizer41, 0, wx.EXPAND, 5)
 
-        bSizer41.Add(bSizer51, 1, wx.EXPAND, 5)
+        bSizer41.Add(bSizer51, 0, wx.EXPAND, 5)
 
         gSizer32 = wx.GridSizer(0, 4, 0, 0)
 
@@ -79,24 +84,38 @@ class main_frame(wx.Frame):
         self.nextD_button = wx.Button(self, wx.ID_ANY, u">>", wx.DefaultPosition, wx.DefaultSize, 0)
         gSizer32.Add(self.nextD_button, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
-        self.m_panel21 = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
-        gSizer32.Add(self.m_panel21, 1, wx.EXPAND | wx.ALL, 5)
+        bSizer41.Add(gSizer32, 0, wx.EXPAND, 5)
 
-        self.m_panel311 = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
-        gSizer32.Add(self.m_panel311, 1, wx.EXPAND | wx.ALL | wx.ALIGN_RIGHT, 5)
+        bSizer9 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_panel411 = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
-        gSizer32.Add(self.m_panel411, 1, wx.EXPAND | wx.ALL, 5)
+        self.data_slider_label = wx.StaticText(self, wx.ID_ANY, u"Data Slider", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.data_slider_label.Wrap(-1)
+        bSizer9.Add(self.data_slider_label, 0, wx.ALL, 5)
 
-        self.set_start_time_button = wx.Button(self, wx.ID_ANY, u"Set data start time", wx.DefaultPosition,
-                                               wx.DefaultSize, 0)
-        gSizer32.Add(self.set_start_time_button, 0, wx.ALL | wx.ALIGN_RIGHT, 5)
+        self.data_slider = wx.Slider(self, wx.ID_ANY, 0, 0, 100, wx.DefaultPosition, wx.Size(-1, -1), wx.SL_HORIZONTAL)
+        self.data_slider.SetMinSize(wx.Size(540, -1))
 
-        bSizer41.Add(gSizer32, 1, wx.EXPAND, 5)
+        bSizer9.Add(self.data_slider, 0, wx.ALL, 5)
 
-        gSizer151 = wx.GridSizer(0, 2, 0, 0)
+        gSizer101 = wx.GridSizer(0, 2, 0, 0)
 
-        bSizer41.Add(gSizer151, 1, wx.EXPAND, 5)
+        self.data_curr_time = wx.StaticText(self, wx.ID_ANY, u"00:00:000", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.data_curr_time.Wrap(-1)
+        gSizer101.Add(self.data_curr_time, 0, wx.ALL, 5)
+
+        self.data_end_time = wx.StaticText(self, wx.ID_ANY, u"00:00:000", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.data_end_time.Wrap(-1)
+        gSizer101.Add(self.data_end_time, 0, wx.ALL | wx.ALIGN_RIGHT, 5)
+
+        self.data_lock = wx.CheckBox(self, wx.ID_ANY, u"Lock data", wx.DefaultPosition, wx.DefaultSize, 0)
+        gSizer101.Add(self.data_lock, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+
+        self.set_start_time_button = wx.Button(self, wx.ID_ANY, u"Synchronize!", wx.DefaultPosition, wx.DefaultSize, 0)
+        gSizer101.Add(self.set_start_time_button, 0, wx.ALL | wx.ALIGN_RIGHT, 5)
+
+        bSizer9.Add(gSizer101, 0, wx.EXPAND, 5)
+
+        bSizer41.Add(bSizer9, 1, wx.EXPAND, 5)
 
         fgSizer1.Add(bSizer41, 1, wx.EXPAND, 5)
 
@@ -104,14 +123,14 @@ class main_frame(wx.Frame):
 
         gSizer311 = wx.GridSizer(0, 2, 0, 0)
 
-        self.start_time_label = wx.StaticText(self, wx.ID_ANY, u"Data start time in video in ms", wx.DefaultPosition,
+        self.start_time_label = wx.StaticText(self, wx.ID_ANY, u"Data and video delay in ms", wx.DefaultPosition,
                                               wx.DefaultSize, 0)
         self.start_time_label.Wrap(-1)
         gSizer311.Add(self.start_time_label, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
         self.time_spinner = wx.SpinCtrl(self, wx.ID_ANY, u"0", wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS,
                                         -100000, 100000, 0)
-        gSizer311.Add(self.time_spinner, 1, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+        gSizer311.Add(self.time_spinner, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
         bSizer7.Add(gSizer311, 0, wx.EXPAND, 5)
 
@@ -125,7 +144,7 @@ class main_frame(wx.Frame):
         self.playback_speed_label.Wrap(-1)
         gSizer8.Add(self.playback_speed_label, 0, wx.ALL, 5)
 
-        bSizer7.Add(gSizer8, 0, wx.EXPAND, 5)
+        bSizer7.Add(gSizer8, 0, 0, 5)
 
         gSizer9 = wx.GridSizer(0, 4, 0, 0)
 
@@ -147,10 +166,36 @@ class main_frame(wx.Frame):
         self.m_staticline8 = wx.StaticLine(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL)
         bSizer7.Add(self.m_staticline8, 0, wx.ALL | wx.EXPAND, 5)
 
-        self.m_panel5 = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
-        bSizer7.Add(self.m_panel5, 1, wx.ALL | wx.EXPAND, 5)
+        gSizer102 = wx.GridSizer(0, 2, 0, 0)
 
-        fgSizer1.Add(bSizer7, 1, wx.EXPAND, 5)
+        self.graph_button = wx.Button(self, wx.ID_ANY, u"Show graph", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.graph_button.Enable(False)
+
+        gSizer102.Add(self.graph_button, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+
+        self.map_button = wx.Button(self, wx.ID_ANY, u"Show map", wx.DefaultPosition, wx.DefaultSize, 0)
+        gSizer102.Add(self.map_button, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+
+        bSizer7.Add(gSizer102, 0, wx.EXPAND, 5)
+
+        fgSizer2 = wx.FlexGridSizer(0, 2, 0, 0)
+        fgSizer2.SetFlexibleDirection(wx.BOTH)
+        fgSizer2.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
+
+        self.map_pic = wx.StaticBitmap(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(400, 400), 0)
+        fgSizer2.Add(self.map_pic, 0, wx.ALL, 5)
+
+        self.graph = GraphPanel(self)
+        fgSizer2.Add(self.graph, 0, wx.ALL, 5)
+
+        bSizer7.Add(fgSizer2, 1, wx.EXPAND, 5)
+
+        fgSizer1.Add(bSizer7, 0, 0, 5)
+
+        #TODO
+        # self.m_panel5 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        # bSizer7.Add( self.m_panel5, 1, wx.ALL|wx.EXPAND, 5 )
+
 
         bSizer8 = wx.BoxSizer(wx.VERTICAL)
 
@@ -176,31 +221,32 @@ class main_frame(wx.Frame):
 
         gSizer7.Add(self.pic1Text, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
 
-        self.pic2 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY, wx.Bitmap(u"1.png", wx.BITMAP_TYPE_ANY),
+        self.pic2 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY,
+                                    wx.Bitmap(u"simple_moto_handler/images/moto.png", wx.BITMAP_TYPE_ANY),
                                     wx.DefaultPosition, wx.DefaultSize, 0)
         self.pic2.SetMinSize(wx.Size(160, 90))
 
         gSizer7.Add(self.pic2, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-        self.pic2Text = wx.StaticText(self.m_scrolledWindow1, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize,
+        self.pic2Text = wx.StaticText(self.m_scrolledWindow1, wx.ID_ANY, u"Moto", wx.DefaultPosition, wx.DefaultSize,
                                       0)
         self.pic2Text.Wrap(-1)
         self.pic2Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
 
         gSizer7.Add(self.pic2Text, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
-        self.pic3 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY, wx.Bitmap(u"1.png", wx.BITMAP_TYPE_ANY),
-                                    wx.DefaultPosition, wx.DefaultSize, 0)
-        self.pic3.SetMinSize(wx.Size(160, 90))
+        # self.pic3 = wx.StaticBitmap(self.m_scrolledWindow1, wx.ID_ANY, wx.Bitmap(u"1.png", wx.BITMAP_TYPE_ANY),
+        #                             wx.DefaultPosition, wx.DefaultSize, 0)
+        # self.pic3.SetMinSize(wx.Size(160, 90))
+        #
+        # gSizer7.Add(self.pic3, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
 
-        gSizer7.Add(self.pic3, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
-
-        self.pic3Text = wx.StaticText(self.m_scrolledWindow1, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize,
-                                      0)
-        self.pic3Text.Wrap(-1)
-        self.pic3Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
-
-        gSizer7.Add(self.pic3Text, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
+        # self.pic3Text = wx.StaticText(self.m_scrolledWindow1, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize,
+        #                               0)
+        # self.pic3Text.Wrap(-1)
+        # self.pic3Text.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BACKGROUND))
+        #
+        # gSizer7.Add(self.pic3Text, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 5)
 
         gSizer7.AddSpacer(( 0, 0), 1, wx.EXPAND, 5)
 
@@ -252,6 +298,12 @@ class main_frame(wx.Frame):
 
         bSizer8.Add(self.main_button, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
+        self.cancel_button = wx.Button(self, wx.ID_ANY, u"CANCEL", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.cancel_button.SetFont(wx.Font(18, 74, 90, 90, False, "Arial"))
+        self.cancel_button.SetMinSize(wx.Size(400, 50))
+
+        bSizer8.Add(self.cancel_button, 0, wx.ALL, 5)
+
         fgSizer1.Add(bSizer8, 1, wx.EXPAND, 5)
 
         bSizer4.Add(fgSizer1, 1, wx.EXPAND, 5)
@@ -268,20 +320,26 @@ class main_frame(wx.Frame):
         self.prev_button.Bind(wx.EVT_BUTTON, self.prev_buttonOnButtonClick)
         self.next_button.Bind(wx.EVT_BUTTON, self.next_buttonOnButtonClick)
         self.nextD_button.Bind(wx.EVT_BUTTON, self.nextD_buttonOnButtonClick)
+        self.data_slider.Bind(wx.EVT_SCROLL_CHANGED, self.data_sliderOnScrollChanged)
+        self.data_lock.Bind(wx.EVT_CHECKBOX, self.data_lockOnCheckBox)
         self.set_start_time_button.Bind(wx.EVT_BUTTON, self.set_start_time_buttonOnButtonClick)
-        self.time_spinner.Bind(wx.EVT_SPINCTRL, self.m_spinCtrl1OnSpinCtrl)
-        self.time_spinner.Bind(wx.EVT_TEXT_ENTER, self.m_spinCtrl1OnTextEnter)
+        self.set_start_time_button.Bind(wx.EVT_KEY_DOWN, self.set_start_time_buttonOnKeyDown)
+        self.time_spinner.Bind(wx.EVT_SPINCTRL, self.time_spinnerOnSpinCtrl)
+        self.time_spinner.Bind(wx.EVT_TEXT_ENTER, self.time_spinnerOnTextEnter)
         self.pb_radioBtn1.Bind(wx.EVT_RADIOBUTTON, self.pb_radioBtn1OnRadioButton)
         self.pb_radioBtn2.Bind(wx.EVT_RADIOBUTTON, self.pb_radioBtn2OnRadioButton)
         self.pb_radioBtn3.Bind(wx.EVT_RADIOBUTTON, self.pb_radioBtn3OnRadioButton)
         self.pb_radioBtn4.Bind(wx.EVT_RADIOBUTTON, self.pb_radioBtn4OnRadioButton)
+        self.graph_button.Bind(wx.EVT_BUTTON, self.graph_buttonOnButtonClick)
+        self.map_button.Bind(wx.EVT_BUTTON, self.map_buttonOnButtonClick)
         self.pic1.Bind(wx.EVT_LEFT_UP, self.pic1OnLeftUp)
         self.pic1Text.Bind(wx.EVT_LEFT_UP, self.pic1TextOnLeftUp)
         self.pic2.Bind(wx.EVT_LEFT_UP, self.pic2OnLeftUp)
         self.pic2Text.Bind(wx.EVT_LEFT_UP, self.pic2TextOnLeftUp)
-        self.pic3.Bind(wx.EVT_LEFT_UP, self.pic3OnLeftUp)
-        self.pic3Text.Bind(wx.EVT_LEFT_UP, self.pic3TextOnLeftUp)
+        # self.pic3.Bind( wx.EVT_LEFT_UP, self.pic3OnLeftUp )
+        # self.pic3Text.Bind( wx.EVT_LEFT_UP, self.pic3TextOnLeftUp )
         self.main_button.Bind(wx.EVT_BUTTON, self.main_buttonOnButtonClick)
+        self.cancel_button.Bind(wx.EVT_BUTTON, self.cancel_buttonOnButtonClick)
 
     def __del__(self):
         pass
@@ -309,13 +367,22 @@ class main_frame(wx.Frame):
     def nextD_buttonOnButtonClick(self, event):
         event.Skip()
 
+    def data_sliderOnScrollChanged(self, event):
+        event.Skip()
+
+    def data_lockOnCheckBox(self, event):
+        event.Skip()
+
     def set_start_time_buttonOnButtonClick(self, event):
         event.Skip()
 
-    def m_spinCtrl1OnSpinCtrl(self, event):
+    def set_start_time_buttonOnKeyDown(self, event):
         event.Skip()
 
-    def m_spinCtrl1OnTextEnter(self, event):
+    def time_spinnerOnSpinCtrl(self, event):
+        event.Skip()
+
+    def time_spinnerOnTextEnter(self, event):
         event.Skip()
 
     def pb_radioBtn1OnRadioButton(self, event):
@@ -330,6 +397,12 @@ class main_frame(wx.Frame):
     def pb_radioBtn4OnRadioButton(self, event):
         event.Skip()
 
+    def graph_buttonOnButtonClick(self, event):
+        event.Skip()
+
+    def map_buttonOnButtonClick(self, event):
+        event.Skip()
+
     def pic1OnLeftUp(self, event):
         event.Skip()
 
@@ -342,13 +415,16 @@ class main_frame(wx.Frame):
     def pic2TextOnLeftUp(self, event):
         event.Skip()
 
-    def pic3OnLeftUp(self, event):
-        event.Skip()
-
-    def pic3TextOnLeftUp(self, event):
-        event.Skip()
+    # def pic3OnLeftUp( self, event ):
+    #     event.Skip()
+    #
+    # def pic3TextOnLeftUp( self, event ):
+    #     event.Skip()
 
     def main_buttonOnButtonClick(self, event):
+        event.Skip()
+
+    def cancel_buttonOnButtonClick(self, event):
         event.Skip()
 
 
@@ -462,12 +538,12 @@ class error_dialog(wx.Dialog):
 
         bSizer6 = wx.BoxSizer(wx.VERTICAL)
 
-        self.m_staticText4 = wx.StaticText(self, wx.ID_ANY, u"ERROR", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.m_staticText4.Wrap(-1)
-        bSizer6.Add(self.m_staticText4, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+        self.label = wx.StaticText(self, wx.ID_ANY, u"ERROR", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.label.Wrap(-1)
+        bSizer6.Add(self.label, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
-        self.m_button4 = wx.Button(self, wx.ID_ANY, u"OK", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer6.Add(self.m_button4, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
+        self.button = wx.Button(self, wx.ID_ANY, u"OK", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer6.Add(self.button, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
 
         self.SetSizer(bSizer6)
         self.Layout()
@@ -476,47 +552,45 @@ class error_dialog(wx.Dialog):
 
         # Connect Events
         self.Bind(wx.EVT_CLOSE, self.error_dialogOnClose)
-        self.m_button4.Bind(wx.EVT_BUTTON, self.m_button4OnButtonClick)
+        self.button.Bind(wx.EVT_BUTTON, self.buttonOnButtonClick)
 
     def __del__(self):
         pass
-
 
     # Virtual event handlers, overide them in your derived class
     def error_dialogOnClose(self, event):
         event.Skip()
 
-    def m_button4OnButtonClick(self, event):
+    def buttonOnButtonClick(self, event):
         event.Skip()
 
 
-###########################################################################
-## Class progress_dialog
-###########################################################################
-
-class progress_dialog(wx.Dialog):
+class GraphPanel(wx.Panel):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=wx.EmptyString, pos=wx.DefaultPosition,
-                           size=wx.Size(206, 84), style=wx.DEFAULT_DIALOG_STYLE)
+        wx.Panel.__init__(self, parent, wx.ID_ANY, wx.DefaultPosition, wx.Size(400, 400), wx.TAB_TRAVERSAL)
+        self.figure = Figure(figsize=(5, 5), facecolor=(0.95686274509, 0.96862745098, 0.98823529411))
+        self.axes = self.figure.add_subplot(111)
+        self.canvas = FigureCanvas(self, -1, self.figure)
+        self.Fit()
+        self.first = True
+        self.abc = None
 
-        self.SetSizeHintsSz(wx.DefaultSize, wx.DefaultSize)
-
-        bSizer5 = wx.BoxSizer(wx.VERTICAL)
-
-        self.m_staticText5 = wx.StaticText(self, wx.ID_ANY, u"Working", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.m_staticText5.Wrap(-1)
-        bSizer5.Add(self.m_staticText5, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL, 5)
-
-        self.m_gauge1 = wx.Gauge(self, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL)
-        self.m_gauge1.SetValue(0)
-        bSizer5.Add(self.m_gauge1, 0, wx.ALL, 5)
-
-        self.SetSizer(bSizer5)
-        self.Layout()
-
-        self.Centre(wx.BOTH)
-
-    def __del__(self):
-        pass
-    
+    def draw(self, interpolation, times, speeds, max_speed, curr_value):
+        if self.first:
+            self.axes.set_xlabel("Time in seconds")
+            self.axes.set_ylabel("Speed in kph")
+            self.axes.axhline(0, color='k', linewidth=2)
+            self.abc = self.axes.axvline(curr_value, color='r')
+            self.axes.plot(times, interpolation(times))
+            tt = []
+            a1 = 0
+            a2 = times[len(times) - 1]
+            for i in range(0, 9):
+                tt.append(int(a2 / 9000.0 * float(i)))
+            self.axes.set_xticklabels(tt, range(0, len(tt) - 1))
+            self.axes.set_ylim(-1, max_speed + 1)
+            self.first = False
+        else:
+            self.abc.set_xdata(curr_value)
+            self.canvas.draw()
 

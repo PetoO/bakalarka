@@ -12,8 +12,7 @@ class TCX_parser:
             self.doc = minidom.parse(filename)
         except IOError:
             self.doc = None
-            print
-            "File doesn't exists or is invalid."
+            print "File doesn't exists or is invalid."
             return None
         self.start_time = 0
 
@@ -22,7 +21,7 @@ class TCX_parser:
             return
         data = []
         self.start_time = int(self.get_time(self.get_activity_id()))
-        data.append(self.start_time)
+        # data.append(self.start_time)
         activity = self.doc.getElementsByTagName("Activity")
         laps = activity.item(0).getElementsByTagName("Lap")
         for lap in laps:
@@ -56,7 +55,7 @@ class TCX_parser:
         # if lap.getElementsByTagName("TotalTimeSeconds") != None:
         # values["TotalTimeSeconds"] = float(lap.getElementsByTagName("TotalTimeSeconds").item(0).firstChild.data)
         # if lap.getElementsByTagName("DistanceMeters") != None:
-        #     values["DistanceMeters"] = float(lap.getElementsByTagName("DistanceMeters").item(0).firstChild.data)
+        # values["DistanceMeters"] = float(lap.getElementsByTagName("DistanceMeters").item(0).firstChild.data)
 
 
         #data.append(values)

@@ -22,7 +22,6 @@ class Video_writer():
         except WindowsError:
             print "Tempresult is being used"
 
-
         self.result = result
         fourcc = VideoWriter_fourcc(*'XVID')
         self.out = VideoWriter(self.tempresult, fourcc, fps, (int(width), int(height)))
@@ -41,7 +40,7 @@ class Video_writer():
 
     def write_frame(self, frame):
         # test
-        #if not self.start:
+        # if not self.start:
         #    self.start_window()
         #self.frame.DisplayNext(frame)
         #self.img.set_img(frame)
@@ -55,7 +54,10 @@ class Video_writer():
         print("Finishing video.")
         self.out.release()
         if sound:
-            self.merge_audio_video()
+            try:
+                self.merge_audio_video()
+            except:
+                shutil.copy2(self.tempresult, self.result)
         else:
             shutil.copy2(self.tempresult, self.result)
         remove(self.tempresult)
@@ -71,7 +73,7 @@ class Video_writer():
             # ####debug code######
 
             # v = Video_writer("video.avi")
-            #v.get_audio_clip()
+            # v.get_audio_clip()
             #v.merge_audio_video()
 
             # class MyThread(Thread):

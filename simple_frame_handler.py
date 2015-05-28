@@ -27,17 +27,13 @@ class Simple_frame_handler:
         # axes are different
         self.pic_pos_y = int(self.video_reader.get_frame_width()) - 1870
         self.pic_pos_x = int(self.video_reader.get_frame_height()) - 250
-        # print self.pic_pos_x
-        # print self.pic_pos_y
         self.last_beat_time = 0
         self.map = mapp.Google_map(dc)
         self.show_map = True
         self.show_hr = True
         self.show_speed = True
         self.show_alt = True
-        print "loadign digits"
         self.load_digits()
-        print "digits loaded"
 
     def create_frame(self, frame, data):
         if data is None:
@@ -61,24 +57,39 @@ class Simple_frame_handler:
         return np.array(frame)
 
     def add_alt(self, frame, data):
+        sz = int(self.frame_size_w / 7.68)
+        ratio = sz / 250.0
         draw = ImageDraw.Draw(frame)
-        font = ImageFont.truetype("arial.ttf", 35)
-        draw.text(((self.frame_size_w - 175, self.frame_size_h - 305)), str(int(data["AltitudeMeters"])) + " alt",
+        font = ImageFont.truetype("arial.ttf", int(35 * ratio))
+        draw.text(((self.frame_size_w - int(175 * ratio), self.frame_size_h - int(305 * ratio))),
+                  str(int(data["AltitudeMeters"])) + " alt",
                   font=font,
                   fill=(255, 255, 255, 255))
         return frame
 
     def add_hrm(self, frame, data):
-        frame.paste(self.heart, (55, self.frame_size_h - self.digit_size_h - 25 - self.heart.size[0]), self.heart)
+        if int(data["HeartRateBpm"]) == 0:
+            return frame
+        sz = int(self.frame_size_w / 19.2)
+        heart = self.heart.resize((sz, sz), Image.BICUBIC)
+        w, h = heart.size
+        ratio = w / sz
+        frame.paste(heart, (55 * ratio, self.frame_size_h - self.digit_size_h - 25 * ratio - heart.size[0]), heart)
         draw = ImageDraw.Draw(frame)
-        font = ImageFont.truetype("arial.ttf", 35)
-        draw.text((60 + self.heart.size[1], self.frame_size_h - self.digit_size_h - 25 - (self.heart.size[0] / 2)),
+        font = ImageFont.truetype("arial.ttf", 35 * ratio)
+        draw.text(
+            (60 * ratio + heart.size[1], self.frame_size_h - self.digit_size_h - 25 * ratio - (heart.size[0] / 2)),
                   str(data["HeartRateBpm"]) + " bpm", font=font, fill=(255, 0, 0, 255))
         return frame
 
     def add_map(self, frame, data):
         mapimg = self.map.get_image(data["LatitudeDegrees"], data["LongitudeDegrees"])
-        mapimg = Image.fromarray(mapimg)
+        try:
+            mapimg = mapimg
+            mapimg = cv2.cvtColor(mapimg, cv2.COLOR_BGR2RGB)
+            mapimg = Image.fromarray(mapimg)
+        except:
+            pass
         w, h = mapimg.size
         bigsize = (w * 3, h * 3)
         mask = Image.new('L', bigsize, 0)
@@ -86,8 +97,10 @@ class Simple_frame_handler:
         draw.ellipse((0, 0) + bigsize, fill=255)
         mask = mask.resize(mapimg.size, Image.ANTIALIAS)
         mapimg.putalpha(mask)
-
-        frame.paste(mapimg, (self.frame_size_w - w, self.frame_size_h - h), mapimg)
+        sz = int(self.frame_size_w / 7.68)
+        mapimg = mapimg.resize((sz, sz), Image.BICUBIC)
+        w, h = mapimg.size
+        frame.paste(mapimg, (self.frame_size_w - w - 5, self.frame_size_h - h - 5), mapimg)
         return frame
 
     def load_digits(self):
@@ -95,7 +108,6 @@ class Simple_frame_handler:
         self.digit_size_w, self.digit_size_h = self.kmh.size
         size = int(self.frame_size_w * self.digit_ratio)
         maxsize = (size, size)
-        print size
         self.kmh.thumbnail(maxsize, Image.ANTIALIAS)
         self.digit_size_w, self.digit_size_h = self.kmh.size
 
@@ -117,7 +129,7 @@ class Simple_frame_handler:
                 if speed == 0:
                     d3 = 0
                 else:
-                    d3 = speed % 1
+                    d3 = speed % 10
             else:
                 d3 = speed % 10
                 speed /= 10

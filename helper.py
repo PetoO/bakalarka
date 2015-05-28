@@ -14,6 +14,8 @@ class Buff_avg():
         # if len(self.buff) >= self.size:
         # self.buff.remove()
         self.buff.append(v)
+        if v < 0.8:
+            return 0
         c = 0
         for a in self.buff:
             c += a
@@ -68,9 +70,3 @@ def scale_image(img, w=0, h=-1):
         fh = float(h) / float(height)
     img2 = cv2.resize(img, (0, 0), fx=fh, fy=fw)
     return img2
-
-
-def loadJSON(file):
-    pass
-
-    # print scale_image(cv2.imread("hr.png"), 1000,5).shape

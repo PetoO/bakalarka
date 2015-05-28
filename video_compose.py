@@ -11,19 +11,29 @@ import video_writer as vw
 class Video_compose():
     def __init__(self, file, video, handler="simple_frame_handler", output="output.avi"):
         self.playback_speed = 1  # todo
+        self.progress = True
         self.data_start_time = 0
-        self.video_start_time = 0
         self.precision = 0.5
         self.curr_frame = 0
         self.frames_count = 0
+        self.video_reader = None
+        self.video_writer = None
+        self.data_collection = None
         print "Creating data collection from given file."
         self.data_collection = dc.Data_collection(file)
         print "Data collection created."
-        self.video_reader = vr.Video_reader(video)
+        try:
+            self.video_reader = vr.Video_reader(video)
+            if not self.video_reader.is_open():
+                self.video_reader = None
+                return
+        except:
+            self.video_reader = None
+            return
+
         self.video_writer = vw.Video_writer(video, self.video_reader.get_fps(), self.video_reader.get_frame_width(),
                                             self.video_reader.get_frame_height(), output)
         self.frames_count = self.video_reader.get_frames_count()
-        # preparation for custom frame handler, now only simple handler for development purposes
         # importing handler, finding class from string name, it must satisfy some criteria such as same name for class and
         self.handler = None
         self.load_handler(handler)
@@ -56,10 +66,9 @@ class Video_compose():
         self.video_start_time = time
 
     def start_composing(self):
+        self.progress = True
         print "Starting composing video."
         # frames_count = self.video_reader.get_frames_count()
-        self.video_reader.set_position_in_ms(self.video_start_time)
-        print "Setting position to 0."
         # + or - to time
         data = self.data_collection.get_data_at(self.video_reader.get_position_in_ms() - self.data_start_time)
         print "Getting first data."
@@ -68,30 +77,37 @@ class Video_compose():
         last = 0
         # print "For cycle begining."
         for i in range(0, int(self.frames_count)):
-            #print "Handling frame:" + str(i)
-            self.curr_frame += 1
-            # curr_video_time = self.video_reader.get_position_in_ms()
-            if i % self.playback_speed is not 0:
-                self.video_reader.read_frame()
-                continue
-            frame = self.handle_frame(self.video_reader.read_frame(), data)
-            if frame is None:
-                print "Frame is None"
-                break
-            #print "Writing frame"
-            self.write_frame(frame)
-            # print b
-            if b - last > self.precision:
-                data = self.data_collection.get_data_at(self.video_reader.get_position_in_ms() - self.data_start_time)
-                last = b
-            b = self.video_reader.get_position_in_ms()
+            # print "Handling frame:" + str(i)
+            if self.progress:
+                self.curr_frame += 1
+                # curr_video_time = self.video_reader.get_position_in_ms()
+                if i % self.playback_speed is not 0:
+                    self.video_reader.read_frame()
+                    continue
+                frame = self.video_reader.read_frame()
+                if frame is not None:
+                    frame = self.handle_frame(frame, data)
+                    #print "Writing frame"
+                    self.write_frame(frame)
+                    # print b
+                    if b - last > self.precision:
+                        data = self.data_collection.get_data_at(
+                            self.video_reader.get_position_in_ms() - self.data_start_time)
+                        last = b
+                    b = self.video_reader.get_position_in_ms()
+            else:
+                self.quit_composing()
+                return
         print time.time() - a
         self.video_writer.finish_video(self.playback_speed == 1)
         return
 
     def quit_composing(self):
-        self.video_writer.quit()
-        self.video_reader.set_position_frame(0)
+        try:
+            self.video_writer.quit()
+            self.video_reader.set_position_frame(0)
+        except:
+            return
 
     def handle_frame(self, frame, data):
         if frame is not None and self.handler is not None:
@@ -106,12 +122,13 @@ class Video_compose():
         data = self.data_collection.get_data_at(self.video_reader.get_position_in_ms() - self.data_start_time)
         return self.handle_frame(self.video_reader.read_frame(), data)
 
-
+    def cancel_composing(self):
+        self.progress = False
 
         # ####debug code######
 
         # a= time.time()
         # v=Video_compose("test2.tcx", "test2.mp4")
         # print time.time()-a
-        #v.start_composing()
+        # v.start_composing()
         #print time.time()-a
